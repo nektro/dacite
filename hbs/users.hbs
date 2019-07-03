@@ -1,0 +1,50 @@
+            <div class="ui segment">
+                <table class="ui compact single line table">
+                    <thead>
+                        <th>ID</th>
+                        <th>Snowflake</th>
+                        <th>Username</th>
+                        <th>JoinedOn</th>
+                        <th>Member?</th>
+                        <th>Admin?</th>
+                    </thead>
+                    <tbody>
+                        {{#each data.users}}
+                        <tr>
+                            <td>{{ID}}</td>
+                            <td>{{Snowflake}}</td>
+                            <td>{{Username}}</td>
+                            <td>{{JoinedOn}}</td>
+                            <td><div class="ui toggle checkbox"><input type="checkbox"{{#if IsMember}} checked{{/if}}{{#equal ID user.ID}} disabled{{/equal}} name="is_member"><label></label></div></td>
+                            <td><div class="ui toggle checkbox"><input type="checkbox"{{#if IsAdmin}} checked{{/if}}{{#equal ID user.ID}} disabled{{/equal}} name="is_admin"><label></label></div></td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script>
+            (function() {
+                window.addEventListener("load", function() {
+                    $(".checkbox").on("change", function(e) {
+                        const cbx = e.target;
+                        const uid = e.target.parentElement.parentElement.parentElement.children[0].textContent;
+                        const prp = cbx.getAttribute("name")
+                        const val = cbx.checked ? "1" : "0";
+                        //
+                        const hd = new Headers()
+                        hd.append("Content-Type", "application/x-www-form-urlencoded");
+                        //
+                        const fd = new URLSearchParams();
+                        fd.append("key", prp);
+                        fd.append("value", val);
+                        //
+                        fetch(`./b/users/update/${uid}`, { method:"put", credentials:"include", headers:hd, body:fd })
+                        .then(x => x.json())
+                        .then(x => console.log(x));
+                    });
+                })
+            })();
+        </script>
+    </body>
+</html>

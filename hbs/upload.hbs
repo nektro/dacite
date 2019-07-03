@@ -1,0 +1,20 @@
+            <div class="ui segment">
+                <progress min="0" max="100" value="0"></progress>
+                <form class="ui form" method="POST" name="upload">
+                    <div class="field">
+                        <label>Select your files</label>
+                        <input type="file" name="files" multiple required accept="image/png,image/jpeg">
+                    </div>
+                    <button class="ui button">Upload</button>
+                </form>
+                <table class="ui compact single line table">
+                    <thead>
+                        <th>Hash</th>
+                        <th>Original?</th>
+                    </thead>
+                    <tbody id="image-list"></tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

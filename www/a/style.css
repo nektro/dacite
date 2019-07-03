@@ -1,0 +1,23 @@
+/*
+*/
+
+x-image {
+    display: block;
+}
+
+body[data-page="home"] .images.grid div {
+    display: inline-block;
+}
+body[data-page="home"] .images.grid div x-image img {
+    display: block;
+    height: 7em;
+    width: 7em;
+}
+
+body[data-page="upload"] table tbody td:nth-child(1) {
+    font-family: 'Courier New', 'Courier', monospace;
+}
+body[data-page="upload"] progress {
+    display: block;
+    width: 100%;
+}
