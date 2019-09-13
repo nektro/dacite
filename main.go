@@ -29,6 +29,10 @@ import (
 	. "github.com/nektro/go-util/util"
 
 	_ "github.com/nektro/dacite/statik"
+
+	_ "image/gif"
+	_ "image/jpeg"
+	_ "image/png"
 )
 
 const (
