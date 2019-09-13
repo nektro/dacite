@@ -384,7 +384,7 @@ func scanUser(rows *sql.Rows) User {
 	return u
 }
 
-func saveOAuth2Info(w http.ResponseWriter, r *http.Request, provider string, id string, name string) {
+func saveOAuth2Info(w http.ResponseWriter, r *http.Request, provider string, id string, name string, resp map[string]interface{}) {
 	sess := etc.GetSession(r)
 	sess.Values["user"] = id
 	sess.Save(r, w)
