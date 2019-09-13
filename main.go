@@ -23,7 +23,6 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/mitchellh/go-homedir"
 	"github.com/nektro/go-util/sqlite"
-	"github.com/nektro/go-util/types"
 	etc "github.com/nektro/go.etc"
 	oauth2 "github.com/nektro/go.oauth2"
 
@@ -102,17 +101,15 @@ func main() {
 
 	etc.SetSessionName("session_dacite_test")
 	p := F("%d", config.Port)
-	dirs := []http.FileSystem{}
 
 	//
 
 	mw := chainMiddleware(mwAddAttribution)
-	dirs = append(dirs, http.Dir("www"))
-	wwFFS := types.MultiplexFileSystem{dirs}
+	etc.MFS.Add(http.Dir("www"))
 
 	//
 
-	http.HandleFunc("/", mw(http.FileServer(wwFFS).ServeHTTP))
+	http.HandleFunc("/", mw(http.FileServer(etc.MFS).ServeHTTP))
 	http.HandleFunc("/login", mw(oauth2.HandleOAuthLogin(isLoggedIn, "./portal", provider, config.ID)))
 	http.HandleFunc("/callback", mw(oauth2.HandleOAuthCallback(provider, config.ID, config.Secret, saveOAuth2Info, "./portal")))
 
