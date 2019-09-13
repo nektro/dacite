@@ -21,6 +21,7 @@ import (
 	"syscall"
 
 	"github.com/gorilla/sessions"
+	dbstorage "github.com/nektro/go.dbstorage"
 	etc "github.com/nektro/go.etc"
 
 	. "github.com/nektro/go-util/alias"
@@ -188,10 +189,7 @@ func main() {
 			ioutil.WriteFile(fp, bytes, os.ModePerm)
 		}
 
-		q := etc.Database.Query(false, F("select * from images where hash = '%s' and uploader = %d", str, u.ID))
-		n := q.Next()
-		q.Close()
-		if n {
+		if dbstorage.QueryHasRows(etc.Database.Query(false, F("select * from images where hash = '%s' and uploader = %d", str, u.ID))) {
 			original = false
 		} else {
 			imgMutex.Lock()
