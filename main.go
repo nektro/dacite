@@ -120,7 +120,7 @@ func main() {
 		}
 		hashes := queryImagesByUser(u)
 		reverse(hashes)
-		writePage(r, w, u, "home", "home", "Home", map[string]interface{}{
+		writePage(r, w, u, "portal", "home", "Home", map[string]interface{}{
 			"hashes": hashes,
 		})
 	}))
@@ -352,7 +352,7 @@ func writeResponse(r *http.Request, w http.ResponseWriter, htmlOut bool, title s
 		"link":    link,
 	}
 	if htmlOut {
-		etc.WriteHandlebarsFile(r, w, "./hbs/response.hbs", data)
+		etc.WriteHandlebarsFile(r, w, "/response.hbs", data)
 	} else {
 		writeJson(w, data)
 	}
@@ -393,13 +393,13 @@ func saveOAuth2Info(w http.ResponseWriter, r *http.Request, provider string, id 
 }
 
 func writePage(r *http.Request, w http.ResponseWriter, user *User, hbs string, page string, title string, data map[string]interface{}) {
-	etc.WriteHandlebarsFile(r, w, "./hbs/_header.hbs", map[string]interface{}{
+	etc.WriteHandlebarsFile(r, w, "/_header.hbs", map[string]interface{}{
 		"base":  "/",
 		"user":  user,
 		"page":  page,
 		"title": title,
 	})
-	etc.WriteHandlebarsFile(r, w, F("./hbs/%s.hbs", hbs), map[string]interface{}{
+	etc.WriteHandlebarsFile(r, w, F("/%s.hbs", hbs), map[string]interface{}{
 		"base":  "/",
 		"user":  user,
 		"page":  page,
