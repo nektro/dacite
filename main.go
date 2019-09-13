@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
@@ -167,12 +168,9 @@ func main() {
 			return
 		}
 
-		bytes, _ := ioutil.ReadAll(fl)
-		sum := sha256.Sum256(bytes)
-		str := hex.EncodeToString(sum[:])
-		original := true
+		bytesO, _ := ioutil.ReadAll(fl)
 
-		_, _, err = image.Decode(fl)
+		_, _, err = image.Decode(bytes.NewReader(bytesO))
 		if err != nil {
 			writeJson(w, map[string]interface{}{
 				"message": err.Error(),
@@ -180,13 +178,17 @@ func main() {
 			return
 		}
 
+		sum := sha256.Sum256(bytesO)
+		str := hex.EncodeToString(sum[:])
+		original := true
+
 		hd := strings.Join(splitByWidthMake(str, 2), "/")
 		ex := filepath.Ext(fh.Filename)
 		fd := F("%s/%s", dataRoot, hd)
 		fp := F("%s/image%s", fd, ex)
 		os.MkdirAll(fd, os.ModePerm)
 		if !DoesFileExist(fp) {
-			ioutil.WriteFile(fp, bytes, os.ModePerm)
+			ioutil.WriteFile(fp, bytesO, os.ModePerm)
 		}
 
 		if dbstorage.QueryHasRows(etc.Database.Query(false, F("select * from images where hash = '%s' and uploader = %d", str, u.ID))) {
