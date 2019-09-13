@@ -21,13 +21,12 @@ import (
 	"syscall"
 
 	"github.com/gorilla/sessions"
-	"github.com/mitchellh/go-homedir"
-	"github.com/nektro/go-util/sqlite"
 	etc "github.com/nektro/go.etc"
-	oauth2 "github.com/nektro/go.oauth2"
 
 	. "github.com/nektro/go-util/alias"
 	. "github.com/nektro/go-util/util"
+
+	_ "github.com/nektro/dacite/statik"
 )
 
 const (
@@ -39,7 +38,6 @@ const (
 var (
 	dataRoot string
 	config   *Config
-	database *sqlite.DB
 	usrMutex = sync.Mutex{}
 	imgMutex = sync.Mutex{}
 )
@@ -49,35 +47,22 @@ func main() {
 
 	//
 
-	hd, _ := homedir.Dir()
-	opRoot := hd + "/.config/dacite"
-	configDir, _ := filepath.Abs(opRoot)
-	Log("Reading configuration from", configDir)
-	DieOnError(Assert(DoesFileExist(configDir), "Please make sure the directory exists!"))
-	etc.InitConfig(configDir+"/config.json", &config)
+	etc.Init("dacite", &config, "./portal", saveOAuth2Info)
 
 	if config.Port == 0 {
 		config.Port = 8000
 	}
 
-	DieOnError(Assert(config.Auth != "", "config.json[auth] must not be empty!"))
-	DieOnError(Assert(config.ID != "", "config.json[id] must not be empty!"))
-	DieOnError(Assert(config.Secret != "", "config.json[secret] must not be empty!"))
 	DieOnError(Assert(config.Root != "", "config.json[root] must not be empty!"))
 
 	dataRoot, _ = filepath.Abs(config.Root)
 	Log("Saving data to", dataRoot)
 	DieOnError(Assert(DoesDirectoryExist(dataRoot), "Directory does not exist!"))
 
-	provider := oauth2.ProviderIDMap[config.Auth]
-
 	//
 
-	database = sqlite.Connect(configDir)
-	checkErr(database.Ping())
-
-	database.CreateTableStruct("users", User{})
-	database.CreateTableStruct("images", ImageRow{})
+	etc.Database.CreateTableStruct("users", User{})
+	etc.Database.CreateTableStruct("images", ImageRow{})
 
 	//
 
@@ -90,7 +75,7 @@ func main() {
 		Log(F("Caught signal '%+v'", sig))
 		Log("Gracefully shutting down...")
 
-		database.Close()
+		etc.Database.Close()
 		Log("Saved database to disk")
 
 		Log("Done!")
@@ -99,19 +84,13 @@ func main() {
 
 	//
 
-	etc.SetSessionName("session_dacite_test")
 	p := F("%d", config.Port)
 
 	//
 
 	mw := chainMiddleware(mwAddAttribution)
-	etc.MFS.Add(http.Dir("www"))
 
 	//
-
-	http.HandleFunc("/", mw(http.FileServer(etc.MFS).ServeHTTP))
-	http.HandleFunc("/login", mw(oauth2.HandleOAuthLogin(isLoggedIn, "./portal", provider, config.ID)))
-	http.HandleFunc("/callback", mw(oauth2.HandleOAuthCallback(provider, config.ID, config.Secret, saveOAuth2Info, "./portal")))
 
 	http.HandleFunc("/portal", mw(func(w http.ResponseWriter, r *http.Request) {
 		_, u, err := pageInit(r, w, http.MethodGet, true, true, false, true)
@@ -209,15 +188,15 @@ func main() {
 			ioutil.WriteFile(fp, bytes, os.ModePerm)
 		}
 
-		q := database.Query(false, F("select * from images where hash = '%s' and uploader = %d", str, u.ID))
+		q := etc.Database.Query(false, F("select * from images where hash = '%s' and uploader = %d", str, u.ID))
 		n := q.Next()
 		q.Close()
 		if n {
 			original = false
 		} else {
 			imgMutex.Lock()
-			id := database.QueryNextID("images")
-			database.QueryPrepared(true, F("insert into images values (%d, '%s', %d, ?, '%s')", id, str, u.ID, T()), fh.Filename)
+			id := etc.Database.QueryNextID("images")
+			etc.Database.QueryPrepared(true, F("insert into images values (%d, '%s', %d, ?, '%s')", id, str, u.ID, T()), fh.Filename)
 			imgMutex.Unlock()
 			Log("Added file", str, "by", u.Username)
 		}
@@ -257,7 +236,7 @@ func main() {
 			writeJson(w, map[string]interface{}{})
 			return
 		}
-		database.QueryDoUpdate("users", k, v, "id", uid)
+		etc.Database.QueryDoUpdate("users", k, v, "id", uid)
 		writeJson(w, map[string]interface{}{
 			"id":  uid,
 			"key": k,
@@ -359,7 +338,7 @@ func writeResponse(r *http.Request, w http.ResponseWriter, htmlOut bool, title s
 }
 
 func queryUserBySnowflake(snowflake string) *User {
-	rows := database.QueryDoSelect("users", "snowflake", snowflake)
+	rows := etc.Database.QueryDoSelect("users", "snowflake", snowflake)
 	if rows.Next() {
 		ru := scanUser(rows)
 		rows.Close()
@@ -367,11 +346,11 @@ func queryUserBySnowflake(snowflake string) *User {
 	}
 	// else
 	usrMutex.Lock()
-	id := database.QueryNextID("users")
-	database.QueryPrepared(true, F("insert into users values ('%d', '%s', '%s', 0, 0, '')", id, snowflake, T()))
+	id := etc.Database.QueryNextID("users")
+	etc.Database.QueryPrepared(true, F("insert into users values ('%d', '%s', '%s', 0, 0, '')", id, snowflake, T()))
 	if id == 0 {
-		database.QueryDoUpdate("users", "is_member", "1", "id", "0")
-		database.QueryDoUpdate("users", "is_admin", "1", "id", "0")
+		etc.Database.QueryDoUpdate("users", "is_member", "1", "id", "0")
+		etc.Database.QueryDoUpdate("users", "is_admin", "1", "id", "0")
 	}
 	usrMutex.Unlock()
 	return queryUserBySnowflake(snowflake)
@@ -389,7 +368,7 @@ func saveOAuth2Info(w http.ResponseWriter, r *http.Request, provider string, id 
 	sess.Values["user"] = id
 	sess.Save(r, w)
 	queryUserBySnowflake(id)
-	database.QueryDoUpdate("users", "username", name, "snowflake", id)
+	etc.Database.QueryDoUpdate("users", "username", name, "snowflake", id)
 }
 
 func writePage(r *http.Request, w http.ResponseWriter, user *User, hbs string, page string, title string, data map[string]interface{}) {
@@ -433,7 +412,7 @@ func splitByWidthMake(str string, size int) []string {
 
 func queryImagesByUser(user *User) []string {
 	var res []string
-	rows := database.Query(false, F("select * from images where uploader = %d", user.ID))
+	rows := etc.Database.Query(false, F("select * from images where uploader = %d", user.ID))
 	for rows.Next() {
 		res = append(res, scanImage(rows).Hash)
 	}
@@ -456,7 +435,7 @@ func reverse(a []string) {
 
 func queryAllUsers() []User {
 	var res []User
-	rows := database.Query(false, "select * from users")
+	rows := etc.Database.Query(false, "select * from users")
 	for rows.Next() {
 		res = append(res, scanUser(rows))
 	}

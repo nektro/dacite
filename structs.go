@@ -2,14 +2,16 @@ package main
 
 import (
 	"net/http"
+
+	oauth2 "github.com/nektro/go.oauth2"
 )
 
 type Config struct {
-	Root   string `json:"root"`
-	Port   int    `json:"port"`
-	Auth   string `json:"auth"`
-	ID     string `json:"id"`
-	Secret string `json:"secret"`
+	Root      string            `json:"root"`
+	Port      int               `json:"port"`
+	Providers []oauth2.Provider `json:"providers"`
+	Clients   []oauth2.AppConf  `json:"clients"`
+	Themes    []string          `json:"themes"`
 }
 
 type User struct {
