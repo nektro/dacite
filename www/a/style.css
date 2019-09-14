@@ -5,13 +5,16 @@ x-image {
     display: block;
 }
 
+body[data-page="home"] {
+    --image-size: 10em;
+}
 body[data-page="home"] .images.grid div {
     display: inline-block;
 }
 body[data-page="home"] .images.grid div x-image img {
     display: block;
-    height: 7em;
-    width: 7em;
+    height: var(--image-size, 10em);
+    width: var(--image-size, 10em);
 }
 
 body[data-page="upload"] table tbody td:nth-child(1) {
