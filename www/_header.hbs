@@ -16,15 +16,17 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/shadydom/1.1.0/shadydom.min.js" integrity="sha256-45wBTqEbiRPLFnGDzmf8igiyXYFAF7XVjJldqj/sA/g=" crossorigin="anonymous"></script>
         <script src="./a/x-image.js"></script>
         <script src="./a/script.js"></script>
+        <!---->
+        <style>
+            body > div:nth-child(2) { margin: 1em; }
+        </style>
     </head>
     <body data-page="{{page}}">
         <div class="ui main menu">
-            <div class="ui container">
-                <div class="header item">@{{user.Username}}</div>
-                <div class="right item">Powered by&nbsp;<a href="https://github.com/nektro/dacite" target="_blank">Dacite</a></div>
-            </div>
+            <div class="header item">@{{user.Username}}</div>
+            <div class="right item">Powered by&nbsp;<a href="https://github.com/nektro/dacite" target="_blank">Dacite</a></div>
         </div>
-        <div class="ui container">
+        <div>
             <h1 class="ui header"><i class="images icon"></i> Dacite</h1>
             <div class="ui secondary pointing menu">
                 <a class="item{{#equal page "home"}} active{{/equal}}" href="./portal">Home</a>
