@@ -24,6 +24,7 @@ import (
 	"github.com/gorilla/sessions"
 	dbstorage "github.com/nektro/go.dbstorage"
 	etc "github.com/nektro/go.etc"
+	"github.com/spf13/pflag"
 
 	. "github.com/nektro/go-util/alias"
 	. "github.com/nektro/go-util/util"
@@ -51,6 +52,9 @@ var (
 func main() {
 	Log("Initializing Dacite...")
 
+	flagRoot := pflag.String("storage", "", "Path of root directory for files")
+	etc.PreInit()
+
 	//
 
 	etc.Init("dacite", &config, "./portal", saveOAuth2Info)
@@ -58,6 +62,9 @@ func main() {
 	if config.Port == 0 {
 		config.Port = 8000
 	}
+
+	config.Root = findFirstNonEmpty(*flagRoot, config.Root)
+	Log("Discovered option:", "--root", config.Root)
 
 	DieOnError(Assert(config.Root != "", "config.json[root] must not be empty!"))
 
@@ -450,4 +457,13 @@ func queryAllUsers() []User {
 func isInt(x string) bool {
 	_, err := strconv.ParseInt(x, 10, 32)
 	return err == nil
+}
+
+func findFirstNonEmpty(values ...string) string {
+	for _, item := range values {
+		if len(item) > 0 {
+			return item
+		}
+	}
+	return ""
 }
