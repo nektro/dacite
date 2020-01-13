@@ -202,7 +202,7 @@ func main() {
 			ioutil.WriteFile(fp, bytesO, os.ModePerm)
 		}
 
-		if dbstorage.QueryHasRows(etc.Database.Query(false, F("select * from images where hash = '%s' and uploader = %d", str, u.ID))) {
+		if dbstorage.QueryHasRows(etc.Database.Build().Se("*").Fr("images").Wh("hash", str).Wh("uploader", strconv.Itoa(u.ID)).Exe()) {
 			original = false
 		} else {
 			imgMutex.Lock()
@@ -247,7 +247,7 @@ func main() {
 			writeJson(w, map[string]interface{}{})
 			return
 		}
-		etc.Database.QueryDoUpdate("users", k, v, "id", uid)
+		etc.Database.Build().Up("users", k, v).Wh("id", uid).Exe()
 		writeJson(w, map[string]interface{}{
 			"id":  uid,
 			"key": k,
@@ -349,7 +349,7 @@ func writeResponse(r *http.Request, w http.ResponseWriter, htmlOut bool, title s
 }
 
 func queryUserBySnowflake(snowflake string) *User {
-	rows := etc.Database.QueryDoSelect("users", "snowflake", snowflake)
+	rows := etc.Database.Build().Se("*").Fr("users").Wh("snowflake", snowflake).Exe()
 	if rows.Next() {
 		ru := scanUser(rows)
 		rows.Close()
@@ -360,8 +360,8 @@ func queryUserBySnowflake(snowflake string) *User {
 	id := etc.Database.QueryNextID("users")
 	etc.Database.QueryPrepared(true, F("insert into users values ('%d', '%s', '%s', 0, 0, '')", id, snowflake, T()))
 	if id == 0 {
-		etc.Database.QueryDoUpdate("users", "is_member", "1", "id", "0")
-		etc.Database.QueryDoUpdate("users", "is_admin", "1", "id", "0")
+		etc.Database.Build().Up("users", "is_member", "1").Wh("id", "0").Exe()
+		etc.Database.Build().Up("users", "is_admin", "1").Wh("id", "0").Exe()
 	}
 	usrMutex.Unlock()
 	return queryUserBySnowflake(snowflake)
@@ -379,7 +379,7 @@ func saveOAuth2Info(w http.ResponseWriter, r *http.Request, provider string, id 
 	sess.Values["user"] = id
 	sess.Save(r, w)
 	queryUserBySnowflake(id)
-	etc.Database.QueryDoUpdate("users", "username", name, "snowflake", id)
+	etc.Database.Build().Up("users", "username", name).Wh("snowflake", id).Exe()
 }
 
 func writePage(r *http.Request, w http.ResponseWriter, user *User, hbs string, page string, title string, data map[string]interface{}) {
@@ -423,7 +423,7 @@ func splitByWidthMake(str string, size int) []string {
 
 func queryImagesByUser(user *User) []string {
 	var res []string
-	rows := etc.Database.Query(false, F("select * from images where uploader = %d", user.ID))
+	rows := etc.Database.Build().Se("*").Fr("images").Wh("uploader", strconv.Itoa(user.ID)).Exe()
 	for rows.Next() {
 		res = append(res, scanImage(rows).Hash)
 	}
@@ -446,7 +446,7 @@ func reverse(a []string) {
 
 func queryAllUsers() []User {
 	var res []User
-	rows := etc.Database.Query(false, "select * from users")
+	rows := etc.Database.Build().Se("*").Fr("users").Exe()
 	for rows.Next() {
 		res = append(res, scanUser(rows))
 	}
