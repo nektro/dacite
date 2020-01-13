@@ -1,7 +1,10 @@
 # Dacite
-![loc](https://tokei.rs/b1/github/nektro/dacite)
+![loc](https://sloc.xyz/github/nektro/dacite)
 [![license](https://img.shields.io/github/license/nektro/dacite.svg)](https://github.com/nektro/dacite/blob/master/LICENSE)
 [![discord](https://img.shields.io/discord/551971034593755159.svg)](https://discord.gg/P6Y4zQC)
+[![paypal](https://img.shields.io/badge/donate-paypal-009cdf)](https://paypal.me/nektro)
+[![circleci](https://circleci.com/gh/nektro/dacite.svg?style=svg)](https://circleci.com/gh/nektro/dacite)
+[![goreportcard](https://goreportcard.com/badge/github.com/nektro/dacite)](https://goreportcard.com/report/github.com/nektro/dacite)
 
 Hash-based image image storage and upload.
 
