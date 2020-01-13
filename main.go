@@ -22,12 +22,12 @@ import (
 	"syscall"
 
 	"github.com/gorilla/sessions"
+	"github.com/nektro/go-util/util"
 	dbstorage "github.com/nektro/go.dbstorage"
 	etc "github.com/nektro/go.etc"
 	"github.com/spf13/pflag"
 
 	. "github.com/nektro/go-util/alias"
-	. "github.com/nektro/go-util/util"
 
 	_ "github.com/nektro/dacite/statik"
 
@@ -50,7 +50,7 @@ var (
 )
 
 func main() {
-	Log("Initializing Dacite...")
+	util.Log("Initializing Dacite...")
 
 	flagRoot := pflag.String("storage", "", "Path of root directory for files")
 	etc.PreInit()
@@ -64,13 +64,13 @@ func main() {
 	}
 
 	config.Root = findFirstNonEmpty(*flagRoot, config.Root)
-	Log("Discovered option:", "--root", config.Root)
+	util.Log("Discovered option:", "--root", config.Root)
 
-	DieOnError(Assert(config.Root != "", "config.json[root] must not be empty!"))
+	util.DieOnError(util.Assert(config.Root != "", "config.json[root] must not be empty!"))
 
 	dataRoot, _ = filepath.Abs(config.Root)
-	Log("Saving data to", dataRoot)
-	DieOnError(Assert(DoesDirectoryExist(dataRoot), "Directory does not exist!"))
+	util.Log("Saving data to", dataRoot)
+	util.DieOnError(util.Assert(util.DoesDirectoryExist(dataRoot), "Directory does not exist!"))
 
 	//
 
@@ -85,13 +85,13 @@ func main() {
 
 	go func() {
 		sig := <-gracefulStop
-		Log(F("Caught signal '%+v'", sig))
-		Log("Gracefully shutting down...")
+		util.Log(F("Caught signal '%+v'", sig))
+		util.Log("Gracefully shutting down...")
 
 		etc.Database.Close()
-		Log("Saved database to disk")
+		util.Log("Saved database to disk")
 
-		Log("Done!")
+		util.Log("Done!")
 		os.Exit(0)
 	}()
 
@@ -198,7 +198,7 @@ func main() {
 		fd := F("%s/%s", dataRoot, hd)
 		fp := F("%s/image%s", fd, ex)
 		os.MkdirAll(fd, os.ModePerm)
-		if !DoesFileExist(fp) {
+		if !util.DoesFileExist(fp) {
 			ioutil.WriteFile(fp, bytesO, os.ModePerm)
 		}
 
@@ -209,7 +209,7 @@ func main() {
 			id := etc.Database.QueryNextID("images")
 			etc.Database.QueryPrepared(true, F("insert into images values (%d, '%s', %d, ?, '%s')", id, str, u.ID, T()), fh.Filename)
 			imgMutex.Unlock()
-			Log("Added file", str, "by", u.Username)
+			util.Log("Added file", str, "by", u.Username)
 		}
 
 		writeJson(w, map[string]interface{}{
@@ -217,7 +217,7 @@ func main() {
 			"name":     fh.Filename,
 			"hash":     str,
 			"original": original,
-			"url":      FullHost(r) + "/p/" + str,
+			"url":      util.FullHost(r) + "/p/" + str,
 		})
 	}))
 
@@ -257,7 +257,7 @@ func main() {
 
 	//
 
-	Log("Initialization complete. Starting server on port " + p)
+	util.Log("Initialization complete. Starting server on port " + p)
 	http.ListenAndServe(":"+p, nil)
 }
 
