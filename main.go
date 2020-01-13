@@ -83,9 +83,7 @@ func main() {
 	signal.Notify(gracefulStop, syscall.SIGTERM)
 	signal.Notify(gracefulStop, syscall.SIGINT)
 
-	go func() {
-		sig := <-gracefulStop
-		util.Log(F("Caught signal '%+v'", sig))
+	util.RunOnClose(func() {
 		util.Log("Gracefully shutting down...")
 
 		etc.Database.Close()
@@ -93,7 +91,7 @@ func main() {
 
 		util.Log("Done!")
 		os.Exit(0)
-	}()
+	})
 
 	//
 
