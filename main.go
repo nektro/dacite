@@ -44,7 +44,7 @@ const (
 
 var (
 	dataRoot string
-	config   *Config
+	config   = new(Config)
 	usrMutex = sync.Mutex{}
 	imgMutex = sync.Mutex{}
 )
@@ -52,19 +52,16 @@ var (
 func main() {
 	util.Log("Initializing Dacite...")
 
-	flagRoot := pflag.String("storage", "", "Path of root directory for files")
+	pflag.StringVar(&config.Root, "root", "", "Path of root directory for files.")
+	pflag.IntVar(&config.Port, "port", 8000, "Port to bind web server to.")
 	etc.PreInit()
 
 	//
 
 	etc.Init("dacite", &config, "./portal", saveOAuth2Info)
 
-	if config.Port == 0 {
-		config.Port = 8000
-	}
-
-	config.Root = findFirstNonEmpty(*flagRoot, config.Root)
-	util.Log("Discovered option:", "--root", config.Root)
+	util.Log("Discovered option:", "--root:", config.Root)
+	util.Log("Discovered option:", "--port:", config.Port)
 
 	util.DieOnError(util.Assert(config.Root != "", "config.json[root] must not be empty!"))
 

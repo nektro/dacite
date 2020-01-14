@@ -7,8 +7,8 @@ import (
 )
 
 type Config struct {
-	Root      string            `json:"root"`
-	Port      int               `json:"port"`
+	Root      string
+	Port      int
 	Providers []oauth2.Provider `json:"providers"`
 	Clients   []oauth2.AppConf  `json:"clients"`
 	Themes    []string          `json:"themes"`
