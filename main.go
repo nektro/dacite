@@ -379,7 +379,7 @@ func splitByWidthMake(str string, size int) []string {
 	splitedLength := int(math.Ceil(float64(strLength) / float64(size)))
 	splited := make([]string, splitedLength)
 	var start, stop int
-	for i := 0; i < splitedLength; i += 1 {
+	for i := 0; i < splitedLength; i++ {
 		start = i * size
 		stop = start + size
 		if stop > strLength {
