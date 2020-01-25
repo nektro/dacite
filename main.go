@@ -241,15 +241,6 @@ func main() {
 	etc.StartServer(config.Port)
 }
 
-func checkErr(err error, args ...string) {
-	if err != nil {
-		fmt.Println("Error")
-		fmt.Println(F("%q: %s", err, args))
-		debug.PrintStack()
-		os.Exit(2)
-	}
-}
-
 // @from https://gist.github.com/gbbr/fa652db0bab132976620bcb7809fd89a
 func chainMiddleware(mw ...Middleware) Middleware {
 	return func(final http.HandlerFunc) http.HandlerFunc {
@@ -437,13 +428,4 @@ func queryAllUsers() []User {
 func isInt(x string) bool {
 	_, err := strconv.ParseInt(x, 10, 32)
 	return err == nil
-}
-
-func findFirstNonEmpty(values ...string) string {
-	for _, item := range values {
-		if len(item) > 0 {
-			return item
-		}
-	}
-	return ""
 }
