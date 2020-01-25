@@ -10,15 +10,47 @@
 
 Hash-based image image storage and upload.
 
+## Getting Started
+These instructions will help you get the project up and running and are required before moving on.
+
+### Creating External Auth Credentials
+In order to get started with Mantle, you will need to create an app on your Identity Provider(s) of choice. See the [nektro/go.oauth2](https://github.com/nektro/go.oauth2#readme) docs for more detailed info on this process on where to go and what data you'll need.
+
+Here you can also fill out a picture and description that will be displayed during the authorization of users on your chosen Identity Provider. When prompted for the "Redirect URI" during the app setup process, the URL to use will be `http://mantle/callback`, replacing `mantle` with any origins you wish Mantle to be usable from, such as `example.com` or `localhost:800`.
+
+Once you have finished the app creation process you should now have a Client ID and Client Secret. These are passed into Mantle through flags as well.
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `--auth-{IDP-ID}-id` | `string` | none. | Client ID. |
+| `--auth-{IDP-ID}-secret` | `string` | none. | Client Secret. |
+
+The Identity Provider IDs can be found from the table in the [nektro/go.oauth2](https://github.com/nektro/go.oauth2#readme) documentation.
+
+## Development
+
+### Prerequisites
+- The Go Language 1.12+ (https://golang.org/dl/)
+- GCC on your PATH (for the https://github.com/mattn/go-sqlite3 installation)
+
+### Installing
+Run
+```
+$ go get -u -v github.com/nektro/dacite
+```
+and then make your way to `$GOPATH/src/github.com/nektro/dacite/`.
+
+Once there, run:
+```
+$ ./start.sh
+```
 
 ## Deployment
-[![CircleCI](https://circleci.com/gh/nektro/dacite.svg?style=svg)](https://circleci.com/gh/nektro/dacite)
+Pre-compiled binaries can be obtained from https://github.com/nektro/dacite/releases/latest.
 
-Pre-compiled binaries are published on Circle CI at https://circleci.com/gh/nektro/dacite. To download a binary, navigate to the most recent build and click on the 'Artifacts' tab. Here there will be a list of files. Click on the one appropriate for your system.
-
-Once downloaded, run the following with the values applicable to you.
+Or you can build from source:
 ```
-$ ./dacite-{date}-{tag}-{os}-{arch}
+$ ./scripts/build_all.sh
 ```
 
 ## Contact
