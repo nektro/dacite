@@ -2,9 +2,7 @@ package main
 
 import (
 	"bytes"
-	"crypto/sha256"
 	"database/sql"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"image"
@@ -51,6 +49,7 @@ func main() {
 
 	pflag.StringVar(&config.Root, "root", "", "Path of root directory for files.")
 	pflag.IntVar(&config.Port, "port", 8000, "Port to bind web server to.")
+	pflag.StringVar(&config.ImgAlgo, "algo", "SHA256", "")
 	etc.PreInit()
 
 	etc.Init("dacite", &config, "./portal", saveOAuth2Info)
@@ -170,8 +169,7 @@ func main() {
 			return
 		}
 
-		sum := sha256.Sum256(bytesO)
-		str := hex.EncodeToString(sum[:])
+		str := util.Hash(config.ImgAlgo, bytesO)
 		original := true
 
 		hd := strings.Join(splitByWidthMake(str, 2), "/")
