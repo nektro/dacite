@@ -56,12 +56,9 @@ func main() {
 	pflag.IntVar(&config.Port, "port", 8000, "Port to bind web server to.")
 	etc.PreInit()
 
-	//
-
 	etc.Init("dacite", &config, "./portal", saveOAuth2Info)
 
-	util.Log("Discovered option:", "--root:", config.Root)
-	util.Log("Discovered option:", "--port:", config.Port)
+	//
 
 	util.DieOnError(util.Assert(config.Root != "", "config.json[root] must not be empty!"))
 
