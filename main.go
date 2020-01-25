@@ -13,13 +13,10 @@ import (
 	"mime"
 	"net/http"
 	"os"
-	"os/signal"
 	"path/filepath"
-	"runtime/debug"
 	"strconv"
 	"strings"
 	"sync"
-	"syscall"
 
 	"github.com/gorilla/sessions"
 	"github.com/nektro/go-util/util"
@@ -72,10 +69,6 @@ func main() {
 	etc.Database.CreateTableStruct("images", ImageRow{})
 
 	//
-
-	gracefulStop := make(chan os.Signal)
-	signal.Notify(gracefulStop, syscall.SIGTERM)
-	signal.Notify(gracefulStop, syscall.SIGINT)
 
 	util.RunOnClose(func() {
 		util.Log("Gracefully shutting down...")
