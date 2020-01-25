@@ -89,10 +89,6 @@ func main() {
 
 	//
 
-	p := F("%d", config.Port)
-
-	//
-
 	mw := chainMiddleware(mwAddAttribution)
 
 	//
@@ -249,16 +245,7 @@ func main() {
 
 	//
 
-	if !util.IsPortAvailable(config.Port) {
-		util.DieOnError(
-			E(F("Binding to port %d failed.", config.Port)),
-			"It may be taken or you may not have permission to. Aborting!",
-		)
-		return
-	}
-
-	util.Log("Initialization complete. Starting server on port " + p)
-	http.ListenAndServe(":"+p, nil)
+	etc.StartServer(config.Port)
 }
 
 func checkErr(err error, args ...string) {
