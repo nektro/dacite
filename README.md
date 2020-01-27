@@ -13,6 +13,13 @@ Hash-based image image storage and upload.
 ## Getting Started
 These instructions will help you get the project up and running and are required before moving on.
 
+### Flags
+
+| Name | Type | Default | Description |
+|------|------|---------|-------------|
+| `--port` | `int` | `8000` | Port to bind web server to. |
+| `--root` | `string` | none. | Path of root directory to store files. |
+
 ### Creating External Auth Credentials
 In order to get started with Mantle, you will need to create an app on your Identity Provider(s) of choice. See the [nektro/go.oauth2](https://github.com/nektro/go.oauth2#readme) docs for more detailed info on this process on where to go and what data you'll need.
 
