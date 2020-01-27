@@ -49,7 +49,6 @@ func main() {
 
 	pflag.StringVar(&config.Root, "root", "", "Path of root directory for files.")
 	pflag.IntVar(&config.Port, "port", 8000, "Port to bind web server to.")
-	pflag.StringVar(&config.ImgAlgo, "algo", "SHA256", "")
 	etc.PreInit()
 
 	etc.Init("dacite", &config, "./portal", saveOAuth2Info)
@@ -169,7 +168,7 @@ func main() {
 			return
 		}
 
-		str := util.Hash(config.ImgAlgo, bytesO)
+		str := util.Hash("SHA256", bytesO)
 		original := true
 
 		hd := strings.Join(splitByWidthMake(str, 2), "/")
