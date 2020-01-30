@@ -44,6 +44,8 @@ var (
 	imgMutex = sync.Mutex{}
 )
 
+// http://localhost/
+
 func main() {
 	util.Log("Initializing Dacite...")
 
