@@ -327,7 +327,7 @@ func queryUserBySnowflake(snowflake string) *User {
 	usrMutex.Lock()
 	id := etc.Database.QueryNextID("users")
 	etc.Database.QueryPrepared(true, F("insert into users values ('%d', '%s', '%s', 0, 0, '')", id, snowflake, T()))
-	if id == 0 {
+	if id == 1 {
 		etc.Database.Build().Up("users", "is_member", "1").Wh("id", "0").Exe()
 		etc.Database.Build().Up("users", "is_admin", "1").Wh("id", "0").Exe()
 	}
