@@ -62,6 +62,8 @@ func main() {
 	util.Log("Saving data to", dataRoot)
 	util.DieOnError(util.Assert(util.DoesDirectoryExist(dataRoot), "Directory does not exist!"))
 
+	util.DieOnError(util.Assert(len(util.Hash(config.ImgAlgo, []byte("hello"))) > 0, "Bad --algo value: "+config.ImgAlgo))
+
 	//
 
 	etc.Database.CreateTableStruct("users", User{})
