@@ -12,6 +12,7 @@ type Config struct {
 	Providers []oauth2.Provider `json:"providers"`
 	Clients   []oauth2.AppConf  `json:"clients"`
 	Themes    []string          `json:"themes"`
+	ImgAlgo   string
 }
 
 type User struct {
