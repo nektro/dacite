@@ -6,7 +6,7 @@
 [![circleci](https://circleci.com/gh/nektro/dacite.svg?style=svg)](https://circleci.com/gh/nektro/dacite)
 [![release](https://img.shields.io/github/v/release/nektro/dacite)](https://github.com/nektro/dacite/releases/latest)
 [![goreportcard](https://goreportcard.com/badge/github.com/nektro/dacite)](https://goreportcard.com/report/github.com/nektro/dacite)
-[![codefactor](https://www.codefactor.io/repository/github/nektro/skarn/badge)](https://www.codefactor.io/repository/github/nektro/skarn)
+[![codefactor](https://www.codefactor.io/repository/github/nektro/dacite/badge)](https://www.codefactor.io/repository/github/nektro/dacite)
 
 Hash-based image image storage and upload.
 
