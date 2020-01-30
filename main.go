@@ -75,7 +75,6 @@ func main() {
 		etc.Database.Close()
 
 		util.Log("Done!")
-		os.Exit(0)
 	})
 
 	//
