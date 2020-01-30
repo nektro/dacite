@@ -19,7 +19,7 @@ These instructions will help you get the project up and running and are required
 |------|------|---------|-------------|
 | `--port` | `int` | `8000` | Port to bind web server to. |
 | `--root` | `string` | none. | Path of root directory to store files. |
-| `--algo` | `string` | `SHA256` | Hash algo to use for files. (One of `MD4`, `MD5`, `SHA1`, `SHA256`, `SHA512`, `RIPEMD160`) |
+| `--algo` | `string` | `SHA1` | Hash algo to use for files. (One of `MD4`, `MD5`, `SHA1`, `SHA256`, `SHA512`, `RIPEMD160`) |
 
 ### Creating External Auth Credentials
 In order to get started with Mantle, you will need to create an app on your Identity Provider(s) of choice. See the [nektro/go.oauth2](https://github.com/nektro/go.oauth2#readme) docs for more detailed info on this process on where to go and what data you'll need.
