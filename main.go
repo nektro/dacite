@@ -116,7 +116,7 @@ func main() {
 			return
 		}
 
-		a := strings.Split(r.RequestURI, "/")
+		a := strings.Split(r.URL.Path, "/")
 		b := a[len(a)-1]
 		hd := strings.Join(splitByWidthMake(b, 2), "/")
 		fd := F("%s/%s", dataRoot, hd)
