@@ -38,6 +38,7 @@ const (
 )
 
 var (
+	Version  = "vMASTER"
 	dataRoot string
 	config   = new(Config)
 	usrMutex = sync.Mutex{}
@@ -47,7 +48,7 @@ var (
 // http://localhost/
 
 func main() {
-	util.Log("Initializing Dacite...")
+	util.Log("Initializing Dacite " + Version + "...")
 
 	pflag.StringVar(&config.Root, "root", "", "Path of root directory for files.")
 	pflag.IntVar(&config.Port, "port", 8000, "Port to bind web server to.")
@@ -354,10 +355,11 @@ func saveOAuth2Info(w http.ResponseWriter, r *http.Request, provider string, id 
 
 func writePage(r *http.Request, w http.ResponseWriter, user *User, hbs string, page string, title string, data map[string]interface{}) {
 	etc.WriteHandlebarsFile(r, w, "/_header.hbs", map[string]interface{}{
-		"base":  "/",
-		"user":  user,
-		"page":  page,
-		"title": title,
+		"version": Version,
+		"base":    "/",
+		"user":    user,
+		"page":    page,
+		"title":   title,
 	})
 	etc.WriteHandlebarsFile(r, w, F("/%s.hbs", hbs), map[string]interface{}{
 		"base":  "/",
