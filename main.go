@@ -341,7 +341,6 @@ func queryUserBySnowflake(snowflake string) *User {
 func scanUser(rows *sql.Rows) User {
 	var u User
 	rows.Scan(&u.ID, &u.Snowflake, &u.JoinedOn, &u.IsMember, &u.IsAdmin, &u.Username)
-	// &u.Passkey
 	return u
 }
 
