@@ -22,6 +22,7 @@ type User struct {
 	IsMember  bool   `json:"is_member" sqlite:"tinyint(1)"`
 	IsAdmin   bool   `json:"is_admin" sqlite:"tinyint(1)"`
 	Username  string `json:"username" sqlite:"text"`
+	Provider  string `json:"provider" sqlite:"text"`
 }
 
 type ImageRow struct {

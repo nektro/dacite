@@ -291,7 +291,7 @@ func pageInit(r *http.Request, w http.ResponseWriter, method string, requireLogi
 		return s, nil, E("not logged in")
 	}
 
-	u := queryUserBySnowflake(s.Values["user"].(string))
+	u := queryUserBySnowflake(s.Values["provider"].(string), s.Values["user"].(string))
 	if requireMember && !u.IsMember {
 		writeResponse(r, w, htmlOut, "Access Forbidden", "You must be a member to view this page.", "", "")
 		return s, u, E("not a member")
@@ -319,7 +319,7 @@ func writeResponse(r *http.Request, w http.ResponseWriter, htmlOut bool, title s
 	}
 }
 
-func queryUserBySnowflake(snowflake string) *User {
+func queryUserBySnowflake(provider, snowflake string) *User {
 	rows := etc.Database.Build().Se("*").Fr("users").Wh("snowflake", snowflake).Exe()
 	if rows.Next() {
 		ru := scanUser(rows)
@@ -329,26 +329,27 @@ func queryUserBySnowflake(snowflake string) *User {
 	// else
 	usrMutex.Lock()
 	id := etc.Database.QueryNextID("users")
-	etc.Database.QueryPrepared(true, F("insert into users values ('%d', '%s', '%s', 0, 0, '')", id, snowflake, T()))
+	etc.Database.QueryPrepared(true, F("insert into users values ('%d', '%s', '%s', 0, 0, '','%s')", id, snowflake, T(), provider))
 	if id == 1 {
 		etc.Database.Build().Up("users", "is_member", "1").Wh("id", "0").Exe()
 		etc.Database.Build().Up("users", "is_admin", "1").Wh("id", "0").Exe()
 	}
 	usrMutex.Unlock()
-	return queryUserBySnowflake(snowflake)
+	return queryUserBySnowflake(provider, snowflake)
 }
 
 func scanUser(rows *sql.Rows) User {
 	var u User
-	rows.Scan(&u.ID, &u.Snowflake, &u.JoinedOn, &u.IsMember, &u.IsAdmin, &u.Username)
+	rows.Scan(&u.ID, &u.Snowflake, &u.JoinedOn, &u.IsMember, &u.IsAdmin, &u.Username, &u.Provider)
 	return u
 }
 
 func saveOAuth2Info(w http.ResponseWriter, r *http.Request, provider string, id string, name string, resp map[string]interface{}) {
 	sess := etc.GetSession(r)
+	sess.Values["provider"] = provider
 	sess.Values["user"] = id
 	sess.Save(r, w)
-	queryUserBySnowflake(id)
+	queryUserBySnowflake(provider, id)
 	etc.Database.Build().Up("users", "username", name).Wh("snowflake", id).Exe()
 }
 
