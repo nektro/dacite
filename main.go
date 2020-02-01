@@ -129,9 +129,7 @@ func main() {
 
 		file := fl[0]
 		ext := filepath.Ext(file.Name())
-		ct := mime.TypeByExtension(ext)
 
-		w.Header().Add("Content-Type", ct)
 		w.Header().Add("Cache-Control", "public, max-age=31536000, immutable")
 		w.Header().Add("ETag", F("\"%s\"", b))
 		http.ServeFile(w, r, fd+"/image"+ext)
