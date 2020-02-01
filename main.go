@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"image"
+	"image/jpeg"
 	"io/ioutil"
 	"math"
 	"mime"
@@ -38,11 +39,12 @@ const (
 )
 
 var (
-	Version  = "vMASTER"
-	dataRoot string
-	config   = new(Config)
-	usrMutex = sync.Mutex{}
-	imgMutex = sync.Mutex{}
+	Version       = "vMASTER"
+	dataRoot      string
+	config        = new(Config)
+	usrMutex      = sync.Mutex{}
+	imgMutex      = sync.Mutex{}
+	compressables = []string{".png", ".jpg", ".jpeg"}
 )
 
 // http://localhost/
@@ -130,6 +132,22 @@ func main() {
 
 		file := fl[0]
 		ext := filepath.Ext(file.Name())
+
+		q, err := getQueryInt(r, w, "q", false)
+		if err == nil {
+			if util.Contains(compressables, ext) {
+				if q >= 0 && q <= 100 {
+					f, _ := os.Open(fd + "/image" + ext)
+					i, _, _ := image.Decode(f)
+					jpeg.Encode(w, i, &jpeg.Options{
+						Quality: int(q),
+					})
+					w.Header().Add("Content-Type", mime.TypeByExtension(".jpg"))
+					w.Header().Add("Cache-Control", "public, max-age=31536000, immutable")
+					return
+				}
+			}
+		}
 
 		w.Header().Add("Cache-Control", "public, max-age=31536000, immutable")
 		w.Header().Add("ETag", F("\"%s\"", b))
@@ -433,4 +451,12 @@ func queryAllUsers() []User {
 func isInt(x string) bool {
 	_, err := strconv.ParseInt(x, 10, 32)
 	return err == nil
+}
+
+func getQueryInt(r *http.Request, w http.ResponseWriter, name string, required bool) (int64, error) {
+	v := r.URL.Query().Get(name)
+	if len(v) == 0 {
+		return -1, E("")
+	}
+	return strconv.ParseInt(v, 10, 64)
 }
