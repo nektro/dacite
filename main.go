@@ -349,6 +349,10 @@ func saveOAuth2Info(w http.ResponseWriter, r *http.Request, provider string, id 
 	sess.Values["provider"] = provider
 	sess.Values["user"] = id
 	sess.Save(r, w)
+	if dbstorage.QueryHasRows(etc.Database.Build().Se("*").Fr("users").WR("provider", "IS", "NULL", true).Wh("snowflake", id).Exe()) {
+		util.Log("update:", "user:", "provider:", provider)
+		etc.Database.Build().Up("users", "provider", provider).WR("provider", "IS", "NULL", true).Wh("snowflake", id).Exe()
+	}
 	queryUserBySnowflake(provider, id)
 	etc.Database.Build().Up("users", "username", name).Wh("snowflake", id).Exe()
 }
