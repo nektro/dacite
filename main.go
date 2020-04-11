@@ -18,6 +18,7 @@ import (
 	"sync"
 
 	"github.com/gorilla/sessions"
+	"github.com/nektro/go-util/arrays/stringsu"
 	"github.com/nektro/go-util/util"
 	dbstorage "github.com/nektro/go.dbstorage"
 	etc "github.com/nektro/go.etc"
@@ -137,7 +138,7 @@ func main() {
 
 		q, err := getQueryInt(r, w, "q", false)
 		if err == nil {
-			if util.Contains(compressables, ext) {
+			if stringsu.Contains(compressables, ext) {
 				if q >= 0 && q <= 100 {
 					f, _ := os.Open(fd + "/image" + ext)
 					i, _, _ := image.Decode(f)
