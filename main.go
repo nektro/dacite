@@ -15,7 +15,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"sync"
 
 	"github.com/gorilla/sessions"
 	"github.com/nektro/go-util/arrays/stringsu"
@@ -43,8 +42,6 @@ var (
 	Version       = "vMASTER"
 	dataRoot      string
 	config        = new(Config)
-	usrMutex      = sync.Mutex{}
-	imgMutex      = sync.Mutex{}
 	compressables = []string{".png", ".jpg", ".jpeg"}
 )
 
@@ -207,10 +204,10 @@ func main() {
 		if dbstorage.QueryHasRows(etc.Database.Build().Se("*").Fr("images").Wh("hash", str).Wh("uploader", strconv.Itoa(u.ID)).Exe()) {
 			original = false
 		} else {
-			imgMutex.Lock()
+			dbstorage.InsertsLock.Lock()
 			id := etc.Database.QueryNextID("images")
 			etc.Database.Build().Ins("images", id, str, u.ID, fh.Filename, T()).Exe()
-			imgMutex.Unlock()
+			dbstorage.InsertsLock.Unlock()
 			util.Log("Added file", str, "by", u.Username)
 		}
 
@@ -348,11 +345,11 @@ func queryUserBySnowflake(provider, snowflake string) *User {
 		return &ru
 	}
 	// else
-	usrMutex.Lock()
+	dbstorage.InsertsLock.Lock()
 	id := etc.Database.QueryNextID("users")
 	adm := util.Btoi(id == 1)
 	etc.Database.Build().Ins("users", id, snowflake, T(), adm, adm, "", provider).Exe()
-	usrMutex.Unlock()
+	dbstorage.InsertsLock.Unlock()
 	return queryUserBySnowflake(provider, snowflake)
 }
 
