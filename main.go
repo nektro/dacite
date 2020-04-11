@@ -50,6 +50,8 @@ var (
 // http://localhost/
 
 func main() {
+	etc.AppID = "dacite"
+	Version = etc.FixBareVersion(Version)
 	util.Log("Initializing Dacite " + Version + "...")
 
 	pflag.StringVar(&config.Root, "root", "", "Path of root directory for files.")
