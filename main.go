@@ -209,7 +209,7 @@ func main() {
 		} else {
 			imgMutex.Lock()
 			id := etc.Database.QueryNextID("images")
-			etc.Database.QueryPrepared(true, F("insert into images values (%d, '%s', %d, ?, '%s')", id, str, u.ID, T()), fh.Filename)
+			etc.Database.Build().Ins("images", id, str, u.ID, fh.Filename, T()).Exe()
 			imgMutex.Unlock()
 			util.Log("Added file", str, "by", u.Username)
 		}
@@ -350,7 +350,7 @@ func queryUserBySnowflake(provider, snowflake string) *User {
 	// else
 	usrMutex.Lock()
 	id := etc.Database.QueryNextID("users")
-	etc.Database.QueryPrepared(true, F("insert into users values ('%d', '%s', '%s', 0, 0, '','%s')", id, snowflake, T(), provider))
+	etc.Database.Build().Ins("users", id, snowflake, T(), 0, 0, "", provider).Exe()
 	if id == 1 {
 		etc.Database.Build().Up("users", "is_member", "1").Wh("id", "0").Exe()
 		etc.Database.Build().Up("users", "is_admin", "1").Wh("id", "0").Exe()
