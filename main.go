@@ -350,11 +350,8 @@ func queryUserBySnowflake(provider, snowflake string) *User {
 	// else
 	usrMutex.Lock()
 	id := etc.Database.QueryNextID("users")
-	etc.Database.Build().Ins("users", id, snowflake, T(), 0, 0, "", provider).Exe()
-	if id == 1 {
-		etc.Database.Build().Up("users", "is_member", "1").Wh("id", "0").Exe()
-		etc.Database.Build().Up("users", "is_admin", "1").Wh("id", "0").Exe()
-	}
+	adm := util.Btoi(id == 1)
+	etc.Database.Build().Ins("users", id, snowflake, T(), adm, adm, "", provider).Exe()
 	usrMutex.Unlock()
 	return queryUserBySnowflake(provider, snowflake)
 }
