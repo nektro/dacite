@@ -91,7 +91,7 @@ func main() {
 
 	//
 
-	http.HandleFunc("/portal", mw(func(w http.ResponseWriter, r *http.Request) {
+	etc.Router.HandleFunc("/portal", mw(func(w http.ResponseWriter, r *http.Request) {
 		_, u, err := pageInit(r, w, http.MethodGet, true, true, false, true)
 		if err != nil {
 			return
@@ -103,7 +103,7 @@ func main() {
 		})
 	}))
 
-	http.HandleFunc("/upload", mw(func(w http.ResponseWriter, r *http.Request) {
+	etc.Router.HandleFunc("/upload", mw(func(w http.ResponseWriter, r *http.Request) {
 		_, u, err := pageInit(r, w, http.MethodGet, true, true, false, true)
 		if err != nil {
 			return
@@ -113,7 +113,7 @@ func main() {
 		})
 	}))
 
-	http.HandleFunc("/p/", mw(func(w http.ResponseWriter, r *http.Request) {
+	etc.Router.PathPrefix("/p/").HandlerFunc(mw(func(w http.ResponseWriter, r *http.Request) {
 		_, _, err := pageInit(r, w, http.MethodGet, false, false, false, true)
 		if err != nil {
 			return
@@ -154,7 +154,7 @@ func main() {
 		http.ServeFile(w, r, fd+"/image"+ext)
 	}))
 
-	http.HandleFunc("/users", mw(func(w http.ResponseWriter, r *http.Request) {
+	etc.Router.HandleFunc("/users", mw(func(w http.ResponseWriter, r *http.Request) {
 		_, u, err := pageInit(r, w, http.MethodGet, true, true, true, true)
 		if err != nil {
 			return
@@ -166,7 +166,7 @@ func main() {
 
 	//
 
-	http.HandleFunc("/b/upload", mw(func(w http.ResponseWriter, r *http.Request) {
+	etc.Router.HandleFunc("/b/upload", mw(func(w http.ResponseWriter, r *http.Request) {
 		_, u, err := pageInit(r, w, http.MethodPost, true, true, false, false)
 		if err != nil {
 			return
@@ -220,7 +220,7 @@ func main() {
 		})
 	}))
 
-	http.HandleFunc("/b/users/update/", mw(func(w http.ResponseWriter, r *http.Request) {
+	etc.Router.PathPrefix("/b/users/update/").HandlerFunc(mw(func(w http.ResponseWriter, r *http.Request) {
 		_, _, err := pageInit(r, w, http.MethodPut, true, true, true, false)
 		if err != nil {
 			writeJson(w, map[string]interface{}{})
