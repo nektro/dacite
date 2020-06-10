@@ -61,13 +61,11 @@ $ ./scripts/build_all.sh
 
 # Built With
 - https://github.com/gorilla/sessions
-- https://github.com/nektro/dacite/statik
 - https://github.com/nektro/go-util
 - https://github.com/nektro/go.dbstorage
 - https://github.com/nektro/go.etc
 - https://github.com/nektro/go.oauth2
 - https://github.com/rakyll/statik
-- https://github.com/spf13/pflag
 
 ## Contact
 - hello@nektro.net
