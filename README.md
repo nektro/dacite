@@ -39,18 +39,16 @@ The Identity Provider IDs can be found from the table in the [nektro/go.oauth2](
 
 ### Prerequisites
 - The Go Language 1.12+ (https://golang.org/dl/)
-- GCC on your PATH (for the https://github.com/mattn/go-sqlite3 installation)
+- Docker (https://www.docker.com/products/docker-desktop)
+- Docker Compose (https://docs.docker.com/compose/install/)
 
 ### Installing
 Run
 ```
-$ go get -u -v github.com/nektro/dacite
-```
-and then make your way to `$GOPATH/src/github.com/nektro/dacite/`.
-
-Once there, run:
-```
-$ ./start.sh
+$ git clone https://github.com/nektro/dacite
+$ cd ./dacite/
+$ go get -v .
+$ docker-compose up
 ```
 
 ## Deployment
