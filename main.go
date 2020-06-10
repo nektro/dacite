@@ -19,9 +19,9 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/nektro/go-util/arrays/stringsu"
 	"github.com/nektro/go-util/util"
+	"github.com/nektro/go-util/vflag"
 	dbstorage "github.com/nektro/go.dbstorage"
 	etc "github.com/nektro/go.etc"
-	"github.com/spf13/pflag"
 
 	. "github.com/nektro/go-util/alias"
 
@@ -52,9 +52,9 @@ func main() {
 	Version = etc.FixBareVersion(Version)
 	util.Log("Initializing Dacite " + Version + "...")
 
-	pflag.StringVar(&config.Root, "root", "", "Path of root directory for files.")
-	pflag.IntVar(&config.Port, "port", 8000, "Port to bind web server to.")
-	pflag.StringVar(&config.ImgAlgo, "algo", "SHA1", "")
+	vflag.StringVar(&config.Root, "root", "", "Path of root directory for files.")
+	vflag.IntVar(&config.Port, "port", 8000, "Port to bind web server to.")
+	vflag.StringVar(&config.ImgAlgo, "algo", "SHA1", "")
 	etc.PreInit()
 
 	etc.Init("dacite", &config, "./portal", saveOAuth2Info)
