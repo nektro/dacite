@@ -22,6 +22,7 @@ import (
 	"github.com/nektro/go-util/vflag"
 	dbstorage "github.com/nektro/go.dbstorage"
 	etc "github.com/nektro/go.etc"
+	"github.com/nektro/go.etc/htp"
 
 	. "github.com/nektro/go-util/alias"
 
@@ -91,7 +92,7 @@ func main() {
 
 	//
 
-	etc.Router.HandleFunc("/portal", mw(func(w http.ResponseWriter, r *http.Request) {
+	htp.Register("/portal", "GET", mw(func(w http.ResponseWriter, r *http.Request) {
 		_, u, err := pageInit(r, w, http.MethodGet, true, true, false, true)
 		if err != nil {
 			return
@@ -103,7 +104,7 @@ func main() {
 		})
 	}))
 
-	etc.Router.HandleFunc("/upload", mw(func(w http.ResponseWriter, r *http.Request) {
+	htp.Register("/upload", "GET", mw(func(w http.ResponseWriter, r *http.Request) {
 		_, u, err := pageInit(r, w, http.MethodGet, true, true, false, true)
 		if err != nil {
 			return
@@ -113,7 +114,7 @@ func main() {
 		})
 	}))
 
-	etc.Router.PathPrefix("/p/").HandlerFunc(mw(func(w http.ResponseWriter, r *http.Request) {
+	htp.Register("/p/*", "GET", mw(func(w http.ResponseWriter, r *http.Request) {
 		_, _, err := pageInit(r, w, http.MethodGet, false, false, false, true)
 		if err != nil {
 			return
@@ -154,7 +155,7 @@ func main() {
 		http.ServeFile(w, r, fd+"/image"+ext)
 	}))
 
-	etc.Router.HandleFunc("/users", mw(func(w http.ResponseWriter, r *http.Request) {
+	htp.Register("/users", "GET", mw(func(w http.ResponseWriter, r *http.Request) {
 		_, u, err := pageInit(r, w, http.MethodGet, true, true, true, true)
 		if err != nil {
 			return
@@ -166,7 +167,7 @@ func main() {
 
 	//
 
-	etc.Router.HandleFunc("/b/upload", mw(func(w http.ResponseWriter, r *http.Request) {
+	htp.Register("/b/upload", "POST", mw(func(w http.ResponseWriter, r *http.Request) {
 		_, u, err := pageInit(r, w, http.MethodPost, true, true, false, false)
 		if err != nil {
 			return
@@ -220,7 +221,7 @@ func main() {
 		})
 	}))
 
-	etc.Router.PathPrefix("/b/users/update/").HandlerFunc(mw(func(w http.ResponseWriter, r *http.Request) {
+	htp.Register("/b/users/update/*", "PUT", mw(func(w http.ResponseWriter, r *http.Request) {
 		_, _, err := pageInit(r, w, http.MethodPut, true, true, true, false)
 		if err != nil {
 			writeJson(w, map[string]interface{}{})
