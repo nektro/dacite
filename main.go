@@ -44,6 +44,7 @@ var (
 	dataRoot      string
 	config        = new(Config)
 	compressables = []string{".png", ".jpg", ".jpeg"}
+	db            dbstorage.Database
 )
 
 // http://localhost/
@@ -72,8 +73,9 @@ func main() {
 
 	//
 
-	etc.Database.CreateTableStruct("users", User{})
-	etc.Database.CreateTableStruct("images", ImageRow{})
+	db = etc.Database
+	db.CreateTableStruct("users", User{})
+	db.CreateTableStruct("images", ImageRow{})
 
 	//
 
@@ -81,7 +83,7 @@ func main() {
 		util.Log("Gracefully shutting down...")
 
 		util.Log("Saving database to disk")
-		etc.Database.Close()
+		db.Close()
 
 		util.Log("Done!")
 	})
@@ -202,12 +204,12 @@ func main() {
 			ioutil.WriteFile(fp, bytesO, os.ModePerm)
 		}
 
-		if dbstorage.QueryHasRows(etc.Database.Build().Se("*").Fr("images").Wh("hash", str).Wh("uploader", strconv.Itoa(u.ID)).Exe()) {
+		if dbstorage.QueryHasRows(db.Build().Se("*").Fr("images").Wh("hash", str).Wh("uploader", strconv.Itoa(u.ID)).Exe()) {
 			original = false
 		} else {
 			dbstorage.InsertsLock.Lock()
-			id := etc.Database.QueryNextID("images")
-			etc.Database.Build().Ins("images", id, str, u.ID, fh.Filename, T()).Exe()
+			id := db.QueryNextID("images")
+			db.Build().Ins("images", id, str, u.ID, fh.Filename, T()).Exe()
 			dbstorage.InsertsLock.Unlock()
 			util.Log("Added file", str, "by", u.Username)
 		}
@@ -247,7 +249,7 @@ func main() {
 			writeJson(w, map[string]interface{}{})
 			return
 		}
-		etc.Database.Build().Up("users", k, v).Wh("id", uid).Exe()
+		db.Build().Up("users", k, v).Wh("id", uid).Exe()
 		writeJson(w, map[string]interface{}{
 			"id":  uid,
 			"key": k,
@@ -339,7 +341,7 @@ func writeResponse(r *http.Request, w http.ResponseWriter, htmlOut bool, title s
 }
 
 func queryUserBySnowflake(provider, snowflake string) *User {
-	rows := etc.Database.Build().Se("*").Fr("users").Wh("snowflake", snowflake).Exe()
+	rows := db.Build().Se("*").Fr("users").Wh("snowflake", snowflake).Exe()
 	if rows.Next() {
 		ru := scanUser(rows)
 		rows.Close()
@@ -347,9 +349,9 @@ func queryUserBySnowflake(provider, snowflake string) *User {
 	}
 	// else
 	dbstorage.InsertsLock.Lock()
-	id := etc.Database.QueryNextID("users")
+	id := db.QueryNextID("users")
 	adm := util.Btoi(id == 1)
-	etc.Database.Build().Ins("users", id, snowflake, T(), adm, adm, "", provider).Exe()
+	db.Build().Ins("users", id, snowflake, T(), adm, adm, "", provider).Exe()
 	dbstorage.InsertsLock.Unlock()
 	return queryUserBySnowflake(provider, snowflake)
 }
@@ -365,12 +367,12 @@ func saveOAuth2Info(w http.ResponseWriter, r *http.Request, provider string, id 
 	sess.Values["provider"] = provider
 	sess.Values["user"] = id
 	sess.Save(r, w)
-	if dbstorage.QueryHasRows(etc.Database.Build().Se("*").Fr("users").WR("provider", "IS", "NULL", true).Wh("snowflake", id).Exe()) {
+	if dbstorage.QueryHasRows(db.Build().Se("*").Fr("users").WR("provider", "IS", "NULL", true).Wh("snowflake", id).Exe()) {
 		util.Log("update:", "user:", "provider:", provider)
-		etc.Database.Build().Up("users", "provider", provider).WR("provider", "IS", "NULL", true).Wh("snowflake", id).Exe()
+		db.Build().Up("users", "provider", provider).WR("provider", "IS", "NULL", true).Wh("snowflake", id).Exe()
 	}
 	queryUserBySnowflake(provider, id)
-	etc.Database.Build().Up("users", "username", name).Wh("snowflake", id).Exe()
+	db.Build().Up("users", "username", name).Wh("snowflake", id).Exe()
 }
 
 func writePage(r *http.Request, w http.ResponseWriter, user *User, hbs string, page string, title string, data map[string]interface{}) {
@@ -415,7 +417,7 @@ func splitByWidthMake(str string, size int) []string {
 
 func queryImagesByUser(user *User) []string {
 	var res []string
-	rows := etc.Database.Build().Se("*").Fr("images").Wh("uploader", strconv.Itoa(user.ID)).Exe()
+	rows := db.Build().Se("*").Fr("images").Wh("uploader", strconv.Itoa(user.ID)).Exe()
 	for rows.Next() {
 		res = append(res, scanImage(rows).Hash)
 	}
@@ -438,7 +440,7 @@ func reverse(a []string) {
 
 func queryAllUsers() []User {
 	var res []User
-	rows := etc.Database.Build().Se("*").Fr("users").Exe()
+	rows := db.Build().Se("*").Fr("users").Exe()
 	for rows.Next() {
 		res = append(res, scanUser(rows))
 	}
