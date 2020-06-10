@@ -195,6 +195,12 @@ func main() {
 		}
 
 		str := hashBytes(bytesO)
+		if len(str) == 0 {
+			writeJson(w, map[string]interface{}{
+				"message": "hash error",
+			})
+			return
+		}
 		original := true
 
 		hd := strings.Join(splitByWidthMake(str, 2), "/")
