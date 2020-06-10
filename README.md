@@ -19,7 +19,7 @@ These instructions will help you get the project up and running and are required
 |------|------|---------|-------------|
 | `--port` | `int` | `8000` | Port to bind web server to. |
 | `--root` | `string` | none. | Path of root directory to store files. |
-| `--algo` | `string` | `SHA1` | Hash algo to use for files. (One of `MD4`, `MD5`, `SHA1`, `SHA224`, `SHA256`, `SHA384`, `SHA512`, `MD5SHA1`, `RIPEMD160`, `SHA3_224`, `SHA3_256`, `SHA3_384`, `SHA3_512`, `SHA512_224`, `SHA512_256`, `BLAKE2s_256`, `BLAKE2b_256`, `BLAKE2b_384`, `BLAKE2b_512`) |
+| `--algo` | `string` | `SHA1` | Hash algo to use for files. (One of `MD4`, `MD5`, `SHA1`, `SHA224`, `SHA256`, `SHA384`, `SHA512`, `MD5SHA1`, `RIPEMD160`, `SHA3_224`, `SHA3_256`, `SHA3_384`, `SHA3_512`, `SHA512_224`, `SHA512_256`, `BLAKE2s_256`, `BLAKE2b_256`, `BLAKE2b_384`, `BLAKE2b_512`, `zeebo/blake3`) |
 
 ### Creating External Auth Credentials
 In order to get started with Dacite, you will need to create an app on your Identity Provider(s) of choice. See the [nektro/go.oauth2](https://github.com/nektro/go.oauth2#readme) docs for more detailed info on this process on where to go and what data you'll need.

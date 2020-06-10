@@ -15,5 +15,6 @@ require (
 	github.com/nektro/go.oauth2 v0.0.0-20200413024519-33aeafe6ee91
 	github.com/rakyll/statik v0.1.7 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/zeebo/blake3 v0.0.3
 	golang.org/x/crypto v0.0.0-20200604202706-70a84ac30bf9 // indirect
 )

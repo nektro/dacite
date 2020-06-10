@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"database/sql"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"image"
@@ -23,6 +24,7 @@ import (
 	dbstorage "github.com/nektro/go.dbstorage"
 	etc "github.com/nektro/go.etc"
 	"github.com/nektro/go.etc/htp"
+	"github.com/zeebo/blake3"
 
 	. "github.com/nektro/go-util/alias"
 
@@ -192,7 +194,7 @@ func main() {
 			return
 		}
 
-		str := util.Hash(config.ImgAlgo, bytesO)
+		str := hashBytes(bytesO)
 		original := true
 
 		hd := strings.Join(splitByWidthMake(str, 2), "/")
@@ -459,4 +461,13 @@ func getQueryInt(r *http.Request, w http.ResponseWriter, name string, required b
 		return -1, E("")
 	}
 	return strconv.ParseInt(v, 10, 64)
+}
+
+func hashBytes(ba []byte) string {
+	if config.ImgAlgo == "zeebo/blake3" {
+		h := blake3.New()
+		h.Write(ba)
+		return hex.EncodeToString(h.Sum([]byte{}))
+	}
+	return util.Hash(config.ImgAlgo, ba)
 }
