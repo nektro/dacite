@@ -7,10 +7,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"image"
-	"image/jpeg"
 	"io/ioutil"
 	"math"
-	"mime"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -18,7 +16,6 @@ import (
 	"strings"
 
 	"github.com/gorilla/sessions"
-	"github.com/nektro/go-util/arrays/stringsu"
 	"github.com/nektro/go-util/util"
 	"github.com/nektro/go-util/vflag"
 	dbstorage "github.com/nektro/go.dbstorage"
@@ -146,22 +143,6 @@ func main() {
 
 		file := fl[0]
 		ext := filepath.Ext(file.Name())
-
-		q, err := getQueryInt(r, w, "q", false)
-		if err == nil {
-			if stringsu.Contains(compressables, ext) {
-				if q >= 0 && q <= 100 {
-					f, _ := os.Open(fd + "/image" + ext)
-					i, _, _ := image.Decode(f)
-					jpeg.Encode(w, i, &jpeg.Options{
-						Quality: int(q),
-					})
-					w.Header().Add("Content-Type", mime.TypeByExtension(".jpg"))
-					w.Header().Add("Cache-Control", "public, max-age=31536000, immutable")
-					return
-				}
-			}
-		}
 
 		w.Header().Add("Cache-Control", "public, max-age=31536000, immutable")
 		w.Header().Add("ETag", F("\"%s\"", b))
