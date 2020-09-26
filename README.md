@@ -72,7 +72,6 @@ $ ./scripts/build_all.sh
 
 ## Contact
 - hello@nektro.net
-- Meghan#2032 on discordapp.com
 - https://twitter.com/nektro
 
 ## License
