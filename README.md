@@ -6,6 +6,7 @@
 [![release](https://img.shields.io/github/v/release/nektro/dacite)](https://github.com/nektro/dacite/releases/latest)
 [![goreportcard](https://goreportcard.com/badge/github.com/nektro/dacite)](https://goreportcard.com/report/github.com/nektro/dacite)
 [![codefactor](https://www.codefactor.io/repository/github/nektro/dacite/badge)](https://www.codefactor.io/repository/github/nektro/dacite)
+[![downloads](https://img.shields.io/github/downloads/nektro/dacite/total.svg)](https://github.com/nektro/dacite/releases)
 [![issuehunt](https://img.shields.io/badge/issuehunt-dacite-38d39f)](https://issuehunt.io/r/nektro/dacite)
 [![docker_pulls](https://img.shields.io/docker/pulls/nektro/dacite)](https://hub.docker.com/r/nektro/dacite)
 [![docker_stars](https://img.shields.io/docker/stars/nektro/dacite)](https://hub.docker.com/r/nektro/dacite)
