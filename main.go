@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/nektro/go-util/arrays/stringsu"
 	"github.com/nektro/go-util/util"
 	"github.com/nektro/go-util/vflag"
 	dbstorage "github.com/nektro/go.dbstorage"
@@ -84,6 +85,15 @@ func main() {
 	})
 
 	etc.HtpErrCb = func(r *http.Request, w http.ResponseWriter, good bool, code int, msg string) {
+		redir := []string{
+			"astheno/jwt: token: signature is invalid",
+			"astheno/jwt: token: token contains an invalid number of segments",
+		}
+		if stringsu.Contains(redir, msg) {
+			w.Header().Set("location", "/login")
+			w.WriteHeader(http.StatusFound)
+			return
+		}
 		w.WriteHeader(code)
 		writeJson(w, map[string]string{
 			"message": msg,
