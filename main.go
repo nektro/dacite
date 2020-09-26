@@ -53,15 +53,16 @@ var (
 
 func main() {
 	etc.AppID = "dacite"
-	Version = etc.FixBareVersion(Version)
+	etc.Version = Version
+	etc.FixBareVersion()
 	util.Log("Initializing Dacite " + Version + "...")
 
 	vflag.StringVar(&config.Root, "root", "", "Path of root directory for files.")
-	vflag.IntVar(&config.Port, "port", 8000, "Port to bind web server to.")
 	vflag.StringVar(&config.ImgAlgo, "algo", "SHA1", "")
+	vflag.BoolVar(&config.Public, "public", false, "")
 	etc.PreInit()
 
-	etc.Init("dacite", &config, "./portal", saveOAuth2Info)
+	etc.Init(&config, "./portal", saveOAuth2Info)
 
 	//
 
@@ -89,6 +90,13 @@ func main() {
 
 		util.Log("Done!")
 	})
+
+	etc.HtpErrCb = func(r *http.Request, w http.ResponseWriter, good bool, code int, msg string) {
+		w.WriteHeader(code)
+		writeJson(w, map[string]string{
+			"message": msg,
+		})
+	}
 
 	//
 
@@ -118,7 +126,7 @@ func main() {
 		})
 	}))
 
-	htp.Register("/p/*", "GET", mw(func(w http.ResponseWriter, r *http.Request) {
+	htp.Register("/p/{hash}", "GET", mw(func(w http.ResponseWriter, r *http.Request) {
 		_, _, err := pageInit(r, w, http.MethodGet, false, false, false, true)
 		if err != nil {
 			return
@@ -242,12 +250,8 @@ func main() {
 			writeJson(w, map[string]interface{}{})
 			return
 		}
-		if etc.AssertPostFormValuesExist(r, "key", "value") != nil {
-			writeJson(w, map[string]interface{}{})
-			return
-		}
-		k := r.PostForm["key"][0]
-		v := r.PostForm["value"][0]
+		k := c.GetFormString("key")
+		v := c.GetFormString("value")
 		for true {
 			if k == "is_member" || k == "is_admin" {
 				if v == "0" || v == "1" {
@@ -267,7 +271,7 @@ func main() {
 
 	//
 
-	etc.StartServer(config.Port)
+	etc.StartServer()
 }
 
 // @from https://gist.github.com/gbbr/fa652db0bab132976620bcb7809fd89a
@@ -371,10 +375,7 @@ func scanUser(rows *sql.Rows) User {
 }
 
 func saveOAuth2Info(w http.ResponseWriter, r *http.Request, provider string, id string, name string, resp map[string]interface{}) {
-	sess := etc.GetSession(r)
-	sess.Values["provider"] = provider
-	sess.Values["user"] = id
-	sess.Save(r, w)
+	etc.JWTSet(w, provider+"\n"+id)
 	if dbstorage.QueryHasRows(db.Build().Se("*").Fr("users").WR("provider", "IS", "NULL", true).Wh("snowflake", id).Exe()) {
 		util.Log("update:", "user:", "provider:", provider)
 		db.Build().Up("users", "provider", provider).WR("provider", "IS", "NULL", true).Wh("snowflake", id).Exe()
