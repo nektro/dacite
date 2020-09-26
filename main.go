@@ -26,9 +26,8 @@ import (
 	"github.com/nektro/go.etc/htp"
 	"github.com/zeebo/blake3"
 
-	. "github.com/nektro/go-util/alias"
-
 	_ "github.com/nektro/dacite/statik"
+	. "github.com/nektro/go-util/alias"
 
 	_ "image/gif"
 	_ "image/jpeg"
