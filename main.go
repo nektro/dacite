@@ -30,18 +30,19 @@ import (
 	_ "image/png"
 )
 
+// byte size consts
 const (
 	Byte     = 1
 	Kilobyte = Byte * 1024
 	Megabyte = Kilobyte * 1024
 )
 
+// more global vars
 var (
-	Version       = "vMASTER"
-	dataRoot      string
-	config        = new(Config)
-	compressables = []string{".png", ".jpg", ".jpeg"}
-	db            dbstorage.Database
+	Version  = "vMASTER"
+	dataRoot string
+	config   = new(Config)
+	db       dbstorage.Database
 )
 
 // http://localhost/
@@ -239,13 +240,10 @@ func main() {
 		}
 		k := c.GetFormString("key")
 		v := c.GetFormString("value")
-		for true {
-			if k == "is_member" || k == "is_admin" {
-				if v == "0" || v == "1" {
-					break
-				}
-			}
-			writeJson(w, map[string]interface{}{})
+		if !(k == "is_member" || k == "is_admin") {
+			return
+		}
+		if !(v == "0" || v == "1") {
 			return
 		}
 		db.Build().Up("users", k, v).Wh("id", uid).Exe()
@@ -279,15 +277,6 @@ func mwAddAttribution(next http.HandlerFunc) http.HandlerFunc {
 		w.Header().Add("Server", "nektro/dacite")
 		next.ServeHTTP(w, r)
 	}
-}
-
-func isLoggedInS(sess *sessions.Session) bool {
-	_, ok := sess.Values["user"]
-	return ok
-}
-
-func isLoggedIn(r *http.Request) bool {
-	return isLoggedInS(etc.GetSession(r))
 }
 
 func pageInit(c *htp.Controller, r *http.Request, w http.ResponseWriter, method string, requireLogin bool, requireMember bool, requireAdmin bool, htmlOut bool) (*User, error) {
@@ -394,7 +383,7 @@ func splitByWidthMake(str string, size int, n int) []string {
 	var start, stop, count int
 	for i := 0; i < splitedLength; i++ {
 		if n > 0 && count == n {
-			splited = append(splited, str[start:len(str)])
+			splited = append(splited, str[start:])
 			break
 		}
 		start = i * size
@@ -444,14 +433,6 @@ func queryAllUsers() []User {
 func isInt(x string) bool {
 	_, err := strconv.ParseInt(x, 10, 32)
 	return err == nil
-}
-
-func getQueryInt(r *http.Request, w http.ResponseWriter, name string, required bool) (int64, error) {
-	v := r.URL.Query().Get(name)
-	if len(v) == 0 {
-		return -1, E("")
-	}
-	return strconv.ParseInt(v, 10, 64)
 }
 
 func hashBytes(ba []byte) string {

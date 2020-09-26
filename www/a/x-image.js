@@ -1,12 +1,12 @@
 /**
  */
 //
-const observer = new IntersectionObserver(function(changes) {
-    changes.forEach(function(change) {
-        if(change.isIntersecting) {
+const observer = new IntersectionObserver((changes) => {
+    changes.forEach((change) => {
+        if (change.isIntersecting) {
             change.target.setAttribute("src", change.target.parentElement.getAttribute("data-src"));
             observer.unobserve(change.target);
-	    }
+        }
     });
 });
 //

@@ -6,6 +6,7 @@ import (
 	oauth2 "github.com/nektro/go.oauth2"
 )
 
+// Config is global vars from flags
 type Config struct {
 	Providers      []oauth2.Provider `json:"providers"`
 	Clients        []oauth2.AppConf  `json:"clients"`
@@ -17,6 +18,7 @@ type Config struct {
 	MaxFolderDepth int
 }
 
+// User is db orm template
 type User struct {
 	ID        int    `json:"id"`
 	Snowflake string `json:"snowflake" sqlite:"text"`
@@ -27,6 +29,7 @@ type User struct {
 	Provider  string `json:"provider" sqlite:"text"`
 }
 
+// ImageRow is db orm template
 type ImageRow struct {
 	ID       int    `json:"id"`
 	Hash     string `json:"hash" sqlite:"text"`
