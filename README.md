@@ -28,7 +28,7 @@ These instructions will help you get the project up and running and are required
 ### Creating External Auth Credentials
 In order to get started with Dacite, you will need to create an app on your Identity Provider(s) of choice. See the [nektro/go.oauth2](https://github.com/nektro/go.oauth2#readme) docs for more detailed info on this process on where to go and what data you'll need.
 
-Here you can also fill out a picture and description that will be displayed during the authorization of users on your chosen Identity Provider. When prompted for the "Redirect URI" during the app setup process, the URL to use will be `http://dacite/callback`, replacing `dacite` with any origins you wish Dacite to be usable from, such as `example.com` or `localhost:800`.
+Here you can also fill out a picture and description that will be displayed during the authorization of users on your chosen Identity Provider. When prompted for the "Redirect URI" during the app setup process, the URL to use will be `http://dacite/callback`, replacing `dacite` with any origins you wish Dacite to be usable from, such as `example.com` or `localhost:8000`.
 
 Once you have finished the app creation process you should now have a Client ID and Client Secret. These are passed into Dacite through flags as well.
 
