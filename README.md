@@ -34,8 +34,7 @@ Once you have finished the app creation process you should now have a Client ID 
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
-| `--auth-{IDP-ID}-id` | `string` | none. | Client ID. |
-| `--auth-{IDP-ID}-secret` | `string` | none. | Client Secret. |
+| `--oauth2-client` | `string` | none. | Client config in the form `for|id|secret` (ex `discord|2429824|sDVavsd`). |
 
 The Identity Provider IDs can be found from the table in the [nektro/go.oauth2](https://github.com/nektro/go.oauth2#readme) documentation.
 
