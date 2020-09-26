@@ -384,20 +384,16 @@ func saveOAuth2Info(w http.ResponseWriter, r *http.Request, provider string, id 
 }
 
 func writePage(r *http.Request, w http.ResponseWriter, user *User, hbs string, page string, title string, data map[string]interface{}) {
-	etc.WriteHandlebarsFile(r, w, "/_header.hbs", map[string]interface{}{
+	ctx := map[string]interface{}{
 		"version": Version,
 		"base":    "/",
 		"user":    user,
 		"page":    page,
 		"title":   title,
-	})
-	etc.WriteHandlebarsFile(r, w, F("/%s.hbs", hbs), map[string]interface{}{
-		"base":  "/",
-		"user":  user,
-		"page":  page,
-		"title": title,
-		"data":  data,
-	})
+	}
+	etc.WriteHandlebarsFile(r, w, "/_header.hbs", ctx)
+	ctx["data"] = data
+	etc.WriteHandlebarsFile(r, w, F("/%s.hbs", hbs), ctx)
 }
 
 func writeJson(w http.ResponseWriter, val interface{}) {
