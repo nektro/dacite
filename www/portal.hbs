@@ -26,11 +26,15 @@
         <script>
             (function() {
                 $(document).ready(function() {
+                    const key = "portal_scale";
                     const range = document.querySelector("input[type=range]");
+                    if (localStorage.getItem(key) === null) { localStorage.setItem(key, "10"); }
+                    range.value = localStorage.getItem(key);
                     range.addEventListener("input", function(e) {
                         const i = parseInt(e.target.value) / 10;
                         e.target.parentElement.parentElement.children[0].children[1].textContent = i.toFixed(1);
                         document.body.style.setProperty("--image-size", `${10*i}em`);
+                        localStorage.setItem("portal_scale", i*10);
                     });
                     range.dispatchEvent(new CustomEvent("input"));
                 });
