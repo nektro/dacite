@@ -346,7 +346,7 @@ func queryUserBySnowflake(provider, snowflake string) *User {
 	// else
 	dbstorage.InsertsLock.Lock()
 	id := db.QueryNextID("users")
-	adm := util.Btoi(id == 1)
+	adm := id == 1
 	db.Build().Ins("users", id, snowflake, T(), adm, adm, "", provider).Exe()
 	dbstorage.InsertsLock.Unlock()
 	return queryUserBySnowflake(provider, snowflake)
