@@ -14,7 +14,7 @@ function dcTN(x) {
     window.addEventListener("load", function() {
         if (document.body.dataset.page === "upload") {
             const pr = document.querySelector("progress");
-            document.forms.upload.addEventListener("submit", function(e) {
+            document.forms.upload.addEventListener("submit", async function(e) {
                 e.preventDefault();
                 const table = document.getElementById("image-list");
                 pr.max = this.files.files.length;
@@ -22,7 +22,7 @@ function dcTN(x) {
                 for (const item of this.files.files) {
                     const fd = new FormData();
                     fd.append("image", item);
-                    fetch("./b/upload", { method:"post", credentials:"include", body:fd })
+                    await fetch("./b/upload", { method:"post", credentials:"include", body:fd })
                     .then(x => x.json())
                     .then(x => {
                         if (x.hash !== undefined) {
