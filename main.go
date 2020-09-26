@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/gorilla/mux"
 	"github.com/nektro/go-util/arrays/stringsu"
 	"github.com/nektro/go-util/util"
 	"github.com/nektro/go-util/vflag"
@@ -126,30 +127,31 @@ func main() {
 		})
 	})
 
-	htp.Register("/p/{hash:[0-9a-f]+}", "GET", func(w http.ResponseWriter, r *http.Request) {
+	htp.Register("/p/{hash:[0-9a-f]+}{ext:(?:.[0-9a-z]+)?}", "GET", func(w http.ResponseWriter, r *http.Request) {
 		c := htp.GetController(r)
 		_, err := pageInit(c, r, w, http.MethodGet, false, false, false, true)
 		if err != nil {
 			return
 		}
-
-		a := strings.Split(r.URL.Path, "/")
-		b := a[len(a)-1]
-		hd := strings.Join(splitByWidthMake(b, 2, config.MaxFolderDepth), "/")
+		hsh := mux.Vars(r)["hash"]
+		ext := mux.Vars(r)["ext"]
+		hd := strings.Join(splitByWidthMake(hsh, 2, config.MaxFolderDepth), "/")
 		fd := F("%s/%s", dataRoot, hd)
 		fl, _ := ioutil.ReadDir(fd)
-
 		if len(fl) == 0 {
 			http.NotFound(w, r)
 			return
 		}
-
 		file := fl[0]
-		ext := filepath.Ext(file.Name())
-
+		fn := file.Name()
+		fe := filepath.Ext(fn)
+		if len(ext) > 0 && fe != ext {
+			http.NotFound(w, r)
+			return
+		}
 		w.Header().Add("Cache-Control", "public, max-age=31536000, immutable")
-		w.Header().Add("ETag", F("\"%s\"", b))
-		http.ServeFile(w, r, fd+"/image"+ext)
+		w.Header().Add("ETag", F(`"%s"`, hsh))
+		http.ServeFile(w, r, fd+"/"+file.Name())
 	})
 
 	htp.Register("/users", "GET", func(w http.ResponseWriter, r *http.Request) {
@@ -199,7 +201,7 @@ func main() {
 		original := true
 
 		hd := strings.Join(splitByWidthMake(str, 2, config.MaxFolderDepth), "/")
-		ex := filepath.Ext(fh.Filename)
+		ex := strings.ToLower(filepath.Ext(fh.Filename))
 		fd := F("%s/%s", dataRoot, hd)
 		fp := F("%s/image%s", fd, ex)
 		os.MkdirAll(fd, os.ModePerm)

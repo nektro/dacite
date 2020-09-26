@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 	"net/http"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -141,7 +142,9 @@ func queryImagesByUser(user *User) []string {
 	var res []string
 	rows := db.Build().Se("*").Fr("images").Wh("uploader", strconv.Itoa(user.ID)).Exe()
 	for rows.Next() {
-		res = append(res, scanImage(rows).Hash)
+		img := scanImage(rows)
+		ext := strings.ToLower(filepath.Ext(img.Name))
+		res = append(res, img.Hash+ext)
 	}
 	rows.Close()
 	return res
