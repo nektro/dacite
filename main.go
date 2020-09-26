@@ -60,6 +60,7 @@ func main() {
 	vflag.StringVar(&config.ImgAlgo, "algo", "SHA1", "")
 	vflag.BoolVar(&config.Public, "public", false, "If set to true, anyone who logs in will be able to upload files.")
 	vflag.IntVar(&config.MaxFileSize, "max-file-size", 20, "Size in MB to limit user uploads to.")
+	vflag.IntVar(&config.MaxFolderDepth, "max-folder-depth", 6, "Max depth of folders to make in /data. 0 for infinite.")
 	etc.PreInit()
 
 	etc.Init(&config, "./portal", saveOAuth2Info)
@@ -134,7 +135,7 @@ func main() {
 
 		a := strings.Split(r.URL.Path, "/")
 		b := a[len(a)-1]
-		hd := strings.Join(splitByWidthMake(b, 2), "/")
+		hd := strings.Join(splitByWidthMake(b, 2, config.MaxFolderDepth), "/")
 		fd := F("%s/%s", dataRoot, hd)
 		fl, _ := ioutil.ReadDir(fd)
 
@@ -211,7 +212,7 @@ func main() {
 		}
 		original := true
 
-		hd := strings.Join(splitByWidthMake(str, 2), "/")
+		hd := strings.Join(splitByWidthMake(str, 2, config.MaxFolderDepth), "/")
 		ex := filepath.Ext(fh.Filename)
 		fd := F("%s/%s", dataRoot, hd)
 		fp := F("%s/image%s", fd, ex)
@@ -403,19 +404,23 @@ func writeJson(w http.ResponseWriter, val interface{}) {
 	fmt.Fprintln(w, string(res))
 }
 
-// from SO
-func splitByWidthMake(str string, size int) []string {
+func splitByWidthMake(str string, size int, n int) []string {
 	strLength := len(str)
 	splitedLength := int(math.Ceil(float64(strLength) / float64(size)))
-	splited := make([]string, splitedLength)
-	var start, stop int
+	splited := []string{}
+	var start, stop, count int
 	for i := 0; i < splitedLength; i++ {
+		if n > 0 && count == n {
+			splited = append(splited, str[start:len(str)])
+			break
+		}
 		start = i * size
 		stop = start + size
 		if stop > strLength {
 			stop = strLength
 		}
-		splited[i] = str[start:stop]
+		splited = append(splited, str[start:stop])
+		count++
 	}
 	return splited
 }
