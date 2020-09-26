@@ -63,12 +63,14 @@ $ ./scripts/build_all.sh
 ```
 
 # Built With
+- https://github.com/gorilla/mux
 - https://github.com/gorilla/sessions
 - https://github.com/nektro/go-util
 - https://github.com/nektro/go.dbstorage
 - https://github.com/nektro/go.etc
 - https://github.com/nektro/go.oauth2
 - https://github.com/rakyll/statik
+- https://github.com/zeebo/blake3
 
 ## Contact
 - hello@nektro.net
