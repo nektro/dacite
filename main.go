@@ -58,7 +58,7 @@ func main() {
 
 	vflag.StringVar(&config.Root, "root", "", "Path of root directory for files.")
 	vflag.StringVar(&config.ImgAlgo, "algo", "SHA1", "")
-	vflag.BoolVar(&config.Public, "public", false, "")
+	vflag.BoolVar(&config.Public, "public", false, "If set to true, anyone who logs in will be able to upload files.")
 	etc.PreInit()
 
 	etc.Init(&config, "./portal", saveOAuth2Info)
