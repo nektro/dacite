@@ -10,7 +10,7 @@
 [![docker_pulls](https://img.shields.io/docker/pulls/nektro/dacite)](https://hub.docker.com/r/nektro/dacite)
 [![docker_stars](https://img.shields.io/docker/stars/nektro/dacite)](https://hub.docker.com/r/nektro/dacite)
 
-Hash-based image image storage and upload.
+Hash-based file storage and upload.
 
 ## Getting Started
 These instructions will help you get the project up and running and are required before moving on.
