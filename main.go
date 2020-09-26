@@ -1,8 +1,6 @@
 package main
 
 import (
-	"bytes"
-	"image"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -182,15 +180,6 @@ func main() {
 		}
 
 		bytesO, _ := ioutil.ReadAll(fl)
-
-		_, _, err = image.Decode(bytes.NewReader(bytesO))
-		if err != nil {
-			writeJson(w, map[string]interface{}{
-				"message": err.Error(),
-			})
-			return
-		}
-
 		str := hashBytes(bytesO)
 		if len(str) == 0 {
 			writeJson(w, map[string]interface{}{
