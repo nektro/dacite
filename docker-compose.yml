@@ -4,6 +4,7 @@ services:
         image: golang:1.12.17
         volumes:
         - .:/app/:ro
+        - ./data/:/files/
         working_dir: /app/
         command: go run . --port 8000 --config './data/config.json'
         ports:
