@@ -59,6 +59,7 @@ func main() {
 	vflag.StringVar(&config.Root, "root", "", "Path of root directory for files.")
 	vflag.StringVar(&config.ImgAlgo, "algo", "SHA1", "")
 	vflag.BoolVar(&config.Public, "public", false, "If set to true, anyone who logs in will be able to upload files.")
+	vflag.IntVar(&config.MaxFileSize, "max-file-size", 20, "Size in MB to limit user uploads to.")
 	etc.PreInit()
 
 	etc.Init(&config, "./portal", saveOAuth2Info)
@@ -308,7 +309,7 @@ func pageInit(r *http.Request, w http.ResponseWriter, method string, requireLogi
 		return nil, nil, E("bad http method")
 	}
 	if method == http.MethodPost {
-		r.ParseMultipartForm(int64(20 * Megabyte))
+		r.ParseMultipartForm(int64(config.MaxFileSize * Megabyte))
 	}
 	if method == http.MethodPut || method == http.MethodPatch {
 		r.ParseForm()

@@ -7,12 +7,13 @@ import (
 )
 
 type Config struct {
-	Providers []oauth2.Provider `json:"providers"`
-	Clients   []oauth2.AppConf  `json:"clients"`
-	Themes    []string          `json:"themes"`
-	Root      string
-	ImgAlgo   string
-	Public    bool
+	Providers   []oauth2.Provider `json:"providers"`
+	Clients     []oauth2.AppConf  `json:"clients"`
+	Themes      []string          `json:"themes"`
+	Root        string
+	ImgAlgo     string
+	Public      bool
+	MaxFileSize int
 }
 
 type User struct {
