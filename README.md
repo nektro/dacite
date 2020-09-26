@@ -6,6 +6,7 @@
 [![release](https://img.shields.io/github/v/release/nektro/dacite)](https://github.com/nektro/dacite/releases/latest)
 [![goreportcard](https://goreportcard.com/badge/github.com/nektro/dacite)](https://goreportcard.com/report/github.com/nektro/dacite)
 [![codefactor](https://www.codefactor.io/repository/github/nektro/dacite/badge)](https://www.codefactor.io/repository/github/nektro/dacite)
+[![issuehunt](https://img.shields.io/badge/issuehunt-dacite-38d39f)](https://issuehunt.io/r/nektro/dacite)
 
 Hash-based image image storage and upload.
 
