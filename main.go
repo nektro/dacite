@@ -149,6 +149,7 @@ func main() {
 		}
 		w.Header().Add("Cache-Control", "public, max-age=31536000, immutable")
 		w.Header().Add("ETag", F(`"%s"`, hsh))
+		w.Header().Add("Content-Disposition", `inline; filename="`+file.Name()+`"`)
 		http.ServeFile(w, r, fd+"/"+file.Name())
 	})
 
@@ -190,9 +191,8 @@ func main() {
 		original := true
 
 		hd := strings.Join(splitByWidthMake(str, 2, config.MaxFolderDepth), "/")
-		ex := strings.ToLower(filepath.Ext(fh.Filename))
 		fd := F("%s/%s", dataRoot, hd)
-		fp := F("%s/image%s", fd, ex)
+		fp := F("%s/%s", fd, fh.Filename)
 		os.MkdirAll(fd, os.ModePerm)
 		if !util.DoesFileExist(fp) {
 			ioutil.WriteFile(fp, bytesO, os.ModePerm)
