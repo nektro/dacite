@@ -7,12 +7,12 @@ import (
 )
 
 type Config struct {
-	Root      string
-	Port      int
 	Providers []oauth2.Provider `json:"providers"`
 	Clients   []oauth2.AppConf  `json:"clients"`
 	Themes    []string          `json:"themes"`
+	Root      string
 	ImgAlgo   string
+	Public    bool
 }
 
 type User struct {
