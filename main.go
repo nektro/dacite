@@ -92,11 +92,7 @@ func main() {
 
 	//
 
-	mw := chainMiddleware(mwAddAttribution)
-
-	//
-
-	htp.Register("/portal", "GET", mw(func(w http.ResponseWriter, r *http.Request) {
+	htp.Register("/portal", "GET", func(w http.ResponseWriter, r *http.Request) {
 		c := htp.GetController(r)
 		u, err := pageInit(c, r, w, http.MethodGet, true, true, false, true)
 		if err != nil {
@@ -107,9 +103,9 @@ func main() {
 		writePage(r, w, u, "portal", "home", "Home", map[string]interface{}{
 			"hashes": hashes,
 		})
-	}))
+	})
 
-	htp.Register("/upload", "GET", mw(func(w http.ResponseWriter, r *http.Request) {
+	htp.Register("/upload", "GET", func(w http.ResponseWriter, r *http.Request) {
 		c := htp.GetController(r)
 		u, err := pageInit(c, r, w, http.MethodGet, true, true, false, true)
 		if err != nil {
@@ -118,9 +114,9 @@ func main() {
 		writePage(r, w, u, "upload", "upload", "Upload", map[string]interface{}{
 			//
 		})
-	}))
+	})
 
-	htp.Register("/p/{hash:[0-9a-f]+}", "GET", mw(func(w http.ResponseWriter, r *http.Request) {
+	htp.Register("/p/{hash:[0-9a-f]+}", "GET", func(w http.ResponseWriter, r *http.Request) {
 		c := htp.GetController(r)
 		_, err := pageInit(c, r, w, http.MethodGet, false, false, false, true)
 		if err != nil {
@@ -144,9 +140,9 @@ func main() {
 		w.Header().Add("Cache-Control", "public, max-age=31536000, immutable")
 		w.Header().Add("ETag", F("\"%s\"", b))
 		http.ServeFile(w, r, fd+"/image"+ext)
-	}))
+	})
 
-	htp.Register("/users", "GET", mw(func(w http.ResponseWriter, r *http.Request) {
+	htp.Register("/users", "GET", func(w http.ResponseWriter, r *http.Request) {
 		c := htp.GetController(r)
 		u, err := pageInit(c, r, w, http.MethodGet, true, true, true, true)
 		if err != nil {
@@ -155,11 +151,11 @@ func main() {
 		writePage(r, w, u, "users", "users", "🔨 All Users", map[string]interface{}{
 			"users": queryAllUsers(),
 		})
-	}))
+	})
 
 	//
 
-	htp.Register("/b/upload", "POST", mw(func(w http.ResponseWriter, r *http.Request) {
+	htp.Register("/b/upload", "POST", func(w http.ResponseWriter, r *http.Request) {
 		c := htp.GetController(r)
 		u, err := pageInit(c, r, w, http.MethodPost, true, true, false, false)
 		if err != nil {
@@ -218,9 +214,9 @@ func main() {
 			"original": original,
 			"url":      util.FullHost(r) + "/p/" + str,
 		})
-	}))
+	})
 
-	htp.Register("/b/users/update/*", "PUT", mw(func(w http.ResponseWriter, r *http.Request) {
+	htp.Register("/b/users/update/*", "PUT", func(w http.ResponseWriter, r *http.Request) {
 		c := htp.GetController(r)
 		_, err := pageInit(c, r, w, http.MethodPut, true, true, true, false)
 		if err != nil {
@@ -246,7 +242,7 @@ func main() {
 			"key": k,
 			"val": v,
 		})
-	}))
+	})
 
 	//
 

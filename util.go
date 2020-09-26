@@ -19,26 +19,6 @@ import (
 	. "github.com/nektro/go-util/alias"
 )
 
-// @from https://gist.github.com/gbbr/fa652db0bab132976620bcb7809fd89a
-func chainMiddleware(mw ...Middleware) Middleware {
-	return func(final http.HandlerFunc) http.HandlerFunc {
-		return func(w http.ResponseWriter, r *http.Request) {
-			last := final
-			for i := len(mw) - 1; i >= 0; i-- {
-				last = mw[i](last)
-			}
-			last(w, r)
-		}
-	}
-}
-
-func mwAddAttribution(next http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Server", "nektro/dacite")
-		next.ServeHTTP(w, r)
-	}
-}
-
 func pageInit(c *htp.Controller, r *http.Request, w http.ResponseWriter, method string, requireLogin bool, requireMember bool, requireAdmin bool, htmlOut bool) (*User, error) {
 	if r.Method != method {
 		writeResponse(r, w, htmlOut, "Forbidden Method", F("%s is not allowed on this endpoint.", r.Method), "", "")
