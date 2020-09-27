@@ -11,7 +11,7 @@
                 <hr>
                 <div class="images grid">
                     {{#each data.hashes}}
-                    <div><x-image src="" alt="" data-src="./p/{{this}}"></x-image></div>
+                    <div><a href="./p/{{this}}" target="_blank"><x-image src="" alt="" data-src="./p/{{this}}"></x-image></a></div>
                     {{/each}}
                 </div>
                 <div>You've reached the end of your gallery.</div>
