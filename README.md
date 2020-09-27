@@ -22,7 +22,7 @@ These instructions will help you get the project up and running and are required
 |------|------|---------|-------------|
 | `--port` | `int` | `8000` | Port to bind web server to. |
 | `--root` | `string` | none. | Path of root directory to store files. |
-| `--algo` | `string` | `SHA1` | Hash algo to use for files. (One of `MD4`, `MD5`, `SHA1`, `SHA224`, `SHA256`, `SHA384`, `SHA512`, `MD5SHA1`, `RIPEMD160`, `SHA3_224`, `SHA3_256`, `SHA3_384`, `SHA3_512`, `SHA512_224`, `SHA512_256`, `BLAKE2s_256`, `BLAKE2b_256`, `BLAKE2b_384`, `BLAKE2b_512`, `zeebo/blake3`) |
+| `--algo` | `string` | `SHA1` | Hash algo to use for files. (One of `MD4`, `MD5`, `SHA1`, `SHA224`, `SHA256`, `SHA384`, `SHA512`, `MD5`, `SHA1`, `RIPEMD160`, `SHA3_224`, `SHA3_256`, `SHA3_384`, `SHA3_512`, `SHA512_224`, `SHA512_256`, `BLAKE2s_256`, `BLAKE2b_256`, `BLAKE2b_384`, `BLAKE2b_512`, `zeebo/blake3`) |
 | `--max-file-size` | `int` | `20` | Size in MB to limit user uploads to. |
 | `--max-folder-depth` | `int` | `6` | Max depth of folders to make in /data. 0 for hash_len/2. |
 
